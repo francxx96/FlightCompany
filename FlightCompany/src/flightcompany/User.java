@@ -1,10 +1,13 @@
 package flightcompany;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 
-public class User {
-    private String name, surname;
+public class User implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
+	private String name, surname;
     private String nickname, password;
 
 

@@ -4,7 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Customer extends User {
-    private double money;
+	private static final long serialVersionUID = 1L;
+	
+	private double money;
     private Set<Flight> bookedFlights;
 
 	public Customer(String name, String surname, String nickname, String password) {

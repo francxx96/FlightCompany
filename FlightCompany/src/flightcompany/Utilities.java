@@ -11,16 +11,29 @@ import java.util.Set;
 
 public class Utilities {
 	
-	public static void writeObject(Set<Flight> set, String filename) {
+	public static void writeFlights(Set<Flight> set, String filename) {
 		try {
-			FileOutputStream f = new FileOutputStream(new File(filename));
-			ObjectOutputStream o = new ObjectOutputStream(f);
+			FileOutputStream fos = new FileOutputStream(new File(filename));
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-			// Write objects to file
-			o.writeObject(set);
+			oos.writeObject(set);
 
-			o.close();
-			f.close();
+			oos.close();
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void writeUsers(Set<User> set, String filename) {
+		try {
+			FileOutputStream fos = new FileOutputStream(new File(filename));
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+			oos.writeObject(set);
+
+			oos.close();
+			fos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -30,10 +43,10 @@ public class Utilities {
 		Object data = new Object();
 		
 		try {
-			FileInputStream fi = new FileInputStream(new File(filename));
-			ObjectInputStream oi = new ObjectInputStream(fi);
+			FileInputStream fis = new FileInputStream(new File(filename));
+			ObjectInputStream ois = new ObjectInputStream(fis);
 			
-			data = oi.readObject();
+			data = ois.readObject();
 
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
