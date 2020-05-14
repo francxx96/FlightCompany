@@ -1,6 +1,6 @@
 package flightcompany;
 
-public class userServices {
+public class UserServices {
 
 	// consuma richieste registrazione utente
 	
