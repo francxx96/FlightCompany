@@ -1,11 +1,14 @@
 package flightcompany;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 
-public class Airport {
-    private AirportCity city;
+public class Airport implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
+	private AirportCity city;
     private double longitude;
     private double latitude;
     private Set<Flight> flights;
@@ -40,7 +43,7 @@ public class Airport {
 
     @Override
     public String toString() {
-        return "Airport city: " + city;
+        return city.toString();
     }
 }
 

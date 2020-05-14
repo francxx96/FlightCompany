@@ -1,7 +1,11 @@
 package flightcompany;
 
-public class Airplane {
-    private AirplaneModel model;
+import java.io.Serializable;
+
+public class Airplane implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
+	private AirplaneModel model;
     private int maxSeats;
 
     public Airplane(AirplaneModel model) {

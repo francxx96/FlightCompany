@@ -1,6 +1,8 @@
 package flightcompany;
 
 import static java.lang.Math.*;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
@@ -8,8 +10,10 @@ import java.util.Objects;
 import java.util.Set;
 
 
-public class Flight {
-    private String id;
+public class Flight implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
+	private String id;
     private int cost;
     private Airplane plane;
     private Set<User> passengers;
@@ -17,7 +21,7 @@ public class Flight {
     private Airport depAirport, arrAirport;
     private LocalDateTime depTime, arrTime;
     
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm");
+    //private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm");
     
     public Flight(String id, Airplane plane, Airport depAirport, Airport arrAirport, LocalDateTime depTime) {
         this.id = id;
@@ -37,7 +41,7 @@ public class Flight {
         return plane.getMaxSeats() - passengers.size();
     }
     
-    public boolean addPassenger(User p) {
+    public boolean addPassenger(Customer p) {
         if (getAvlSeats() > 0 && p.getMoney() >= cost)
             if (passengers.add(p)) {
                 p.setMoney(p.getMoney()-cost);
@@ -71,8 +75,8 @@ public class Flight {
     public String toString() {
         return "Flight ID: " + id + " -- " + plane + "\n"
                 + "Available seats: " + getAvlSeats() + " -- Ticket price: €" + cost + "\n"
-                + "Departure: " + depAirport + ", at time: " + depTime.format(formatter) + "\n"
-                + "Arrival: " + arrAirport + ", at time: " + arrTime.format(formatter);
+                + "From " + depAirport + ", at time: " + depTime.format(DateTimeFormatter.ofPattern("dd-MM-yy HH:mm")) + "\n"
+                + "To " + arrAirport + ", at time: " + arrTime.format(DateTimeFormatter.ofPattern("dd-MM-yy HH:mm"));
     }
     
     public String getId() {
