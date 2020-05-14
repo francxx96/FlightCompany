@@ -17,7 +17,7 @@ public class Flight {
     private Airport depAirport, arrAirport;
     private LocalDateTime depTime, arrTime;
     
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm");
     
     public Flight(String id, Airplane plane, Airport depAirport, Airport arrAirport, LocalDateTime depTime) {
         this.id = id;
