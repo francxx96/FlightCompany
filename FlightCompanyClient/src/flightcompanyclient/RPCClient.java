@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException;
 
 public class RPCClient implements AutoCloseable {
 
-    private Connection connection;
+    private Connection connection; 
     private Channel channel;
     private String requestQueueName = "rpc_queue";
 
