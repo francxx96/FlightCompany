@@ -10,14 +10,13 @@ public class User implements Serializable {
 	private String name, surname;
     private String nickname, password;
 
-
     public User(String name, String surname, String nickname, String password) {
         this.name = name;
         this.surname = surname;
         this.nickname = nickname;
         this.password = password;
     }
-
+    
     @Override
     public String toString() {
         return nickname + " -- Name and surname: " + name + " " + surname;
@@ -34,7 +33,11 @@ public class User implements Serializable {
     public String getNickname() {
         return nickname;
     }
-
+    
+    public String getPassword() {
+    	return password;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 3;

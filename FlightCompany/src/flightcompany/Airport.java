@@ -2,6 +2,7 @@ package flightcompany;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -44,6 +45,25 @@ public class Airport implements Serializable {
     @Override
     public String toString() {
         return city.toString();
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 41 * hash + Objects.hashCode(this.city);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final Airport other = (Airport) obj;
+        return this.city == other.city;
     }
 }
 

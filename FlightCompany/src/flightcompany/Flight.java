@@ -51,6 +51,10 @@ public class Flight implements Serializable {
         return false;
     }
     
+    public void addDelay(int minutes) {
+    	this.arrTime.plusMinutes(minutes);
+    }
+    
     public static double airportDistance(Airport departure, Airport arrival) {
         double lat1 = departure.getLatitude();
         double lat2 = arrival.getLatitude();
@@ -109,6 +113,10 @@ public class Flight implements Serializable {
 
     public LocalDateTime getArrTime() {
         return arrTime;
+    }
+    
+    public void setArrTime(LocalDateTime arrTime) {
+    	this.arrTime = arrTime;
     }
 
     @Override
