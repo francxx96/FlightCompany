@@ -89,7 +89,7 @@ public class Flight implements Serializable {
         return cost;
     }
 
-    public void setCost(int cost) {
+    public void setCost(double cost) {
         this.cost = cost;
     }
 
@@ -111,6 +111,10 @@ public class Flight implements Serializable {
 
     public LocalDateTime getArrTime() {
         return arrTime;
+    }
+    
+    public void setDepTime(LocalDateTime depTime) {
+    	this.depTime = depTime;
     }
     
     public void setArrTime(LocalDateTime arrTime) {
