@@ -111,11 +111,12 @@ public class UserServices {
 		if (f == null)
 			return false;
 		
-		if (f.getDepTime().isBefore(LocalDateTime.now().plusHours(1)))
+		boolean isCancelled = cst.cancelFlight(f);
+		if (isCancelled && f.getDepTime().isBefore(LocalDateTime.now().plusHours(1)))
 			// The customer will receive a refund if he cancels the reservation at least one hour before departure
 			cst.setMoney(cst.getMoney()+f.getCost());	
 		
-		return cst.cancelFlight(f);
+		return isCancelled;
 	}
 	
 	// consuma richieste aggiornamento saldo
