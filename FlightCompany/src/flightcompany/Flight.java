@@ -135,4 +135,5 @@ public class Flight implements Serializable {
         final Flight other = (Flight) obj;
         return this.id.equals(other.id);
     }
+    
 }

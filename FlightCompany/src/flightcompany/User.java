@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 
-public class User implements Serializable {
+public abstract class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String name, surname;
@@ -17,12 +17,13 @@ public class User implements Serializable {
         this.password = password;
     }
     
-    @Override
-    public String toString() {
-        return nickname + " -- Name and surname: " + name + " " + surname;
-    }
     
-    public String getName() {
+    @Override
+	public String toString() {
+		return "[name=" + name + ", surname=" + surname + ", nickname=" + nickname + ", password=" + password + "]";
+	}
+
+	public String getName() {
         return name;
     }
 

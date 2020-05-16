@@ -1,5 +1,10 @@
 package flightcompany;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,6 +14,7 @@ public class RPCServer {
 
     private static final String RPC_QUEUE_NAME = "rpc_queue";
     private static final UserServices userSer = new UserServices();
+	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public static void main(String[] argv) throws Exception {
     	ConnectionFactory factory = new ConnectionFactory(); // "factory" class to facilitate opening a Connection to an AMQP broker
@@ -31,34 +37,100 @@ public class RPCServer {
                         .build();
 
                 String response = "";
+                LocalDateTime dateTime;
+    			AirportCity depCity;
+    			AirportCity arrCity;
 
                 try {
                     String message = new String(delivery.getBody(), "UTF-8");
-                	try {
-						JSONObject jo = new JSONObject(message);
-	                    System.out.println(" [SERVER worker thread] Received: " + jo.toString());                    
-	                    switch(jo.getString("command")) {
-		            		case "registration":
-		            			if(userSer.registrationRequest(jo.getString("name"),jo.getString("surname"),jo.getString("nickname"),jo.getString("password")))
-		            				response = "User successfully registered!";
-		            			else
-		            				response = "Please, choose a different username";
-		            			break;
-		            		case "login": 
-		            			if(userSer.loginRequest(jo.getString("nickname"),jo.getString("password")))
-		            				response = "User successfully logged in!";
-		            			else
-		            				response = "Username not present";
-		            			break;
-	                    }
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}                   
-                } catch (RuntimeException e) {
+					JSONObject jo = new JSONObject(message);
+                    System.out.println(" [SERVER worker thread] Received: " + jo.toString());                    
+                    switch(jo.getString("command")) {
+	            		case "registration":
+	            			boolean admin;
+	            			if(jo.getString("admin").equals("yes"))
+	            				admin = true;
+	            			else
+	            				admin = false;
+	            			if(userSer.registrationRequest(jo.getString("name"),jo.getString("surname"),jo.getString("nickname"),jo.getString("password"), admin))
+	            				response = "User successfully registered!";
+	            			else
+	            				response = "Please, choose a different username";
+	            			break;
+	            		case "login": 
+	            			if(userSer.loginRequest(jo.getString("nickname"),jo.getString("password")))
+	            				response = "User successfully logged in!";
+	            			else
+	            				response = "Username not present";
+	            			break;
+	            		case "logout":
+	            			if(userSer.logoutRequest(jo.getString("nickname")))
+	            				response = "User successfully logged out!";
+	            			else
+	            				response = "Username not present";
+	            			break;
+	            		case "searchRoutes": 
+	            			dateTime = LocalDateTime.parse(jo.getString("depTime"), formatter);
+	            			depCity = AirportCity.valueOf(jo.getString("depCity").toUpperCase());
+	            			arrCity = AirportCity.valueOf(jo.getString("arrCity").toUpperCase());
+	            			response = flightsToString(userSer.searchRoutes(depCity,arrCity,dateTime));
+	            			break;
+	            		case "bookFlight":
+	            			if(userSer.bookFlight(jo.getString("flightId"), jo.getString("nickname")))
+	            				response = "User successfully booked!";
+	            			else
+	            				response = "Please, choose another flight";
+	            			break;
+	            		case "cancelFlight":
+	            			if(userSer.cancelFlight(jo.getString("flightId"), jo.getString("nickname")))
+	            				response = "User successfully cancelled!";
+	            			else
+	            				response = "Please, choose another flight";
+	            			break;
+	            		case "charge":
+	            			if(userSer.chargeMoney((Float) jo.get("amount"), jo.getString("nickname")))
+	            				response = "Account updated successfully!";
+	            			else
+	            				response = "Unable to update account";
+	            			break;
+	            		case "addFlight": 
+	            			dateTime = LocalDateTime.parse(jo.getString("depTime"), formatter);
+	            			depCity = AirportCity.valueOf(jo.getString("depCity").toUpperCase());
+	            			arrCity = AirportCity.valueOf(jo.getString("arrCity").toUpperCase());
+	            			AirplaneModel planeModel = AirplaneModel.valueOf(jo.getString("planeModel").toUpperCase());
+	            			if(userSer.addFlight(jo.getString("flightId"), planeModel, depCity, arrCity, dateTime, jo.getString("nickname")))
+	            				response = "Flight successfully added!";
+	            			else
+	            				response = "Unable to add the flight";
+	            			break;
+	            		case "removeFlight":
+	            			if(userSer.removeFlight(jo.getString("flightId"), jo.getString("nickname")))
+	            				response = "Flight successfully removed!";
+	            			else
+	            				response = "Unable to remove the flight";
+	            			break;
+	            		case "putDelay":
+	            			if(userSer.putDelay(jo.getString("flightId"), jo.getInt("minutes"), jo.getString("nickname")))
+	            				response = "Delay successfully added!";
+	            			else
+	            				response = "Unable to add the delay";
+	            			break;
+	            		case "putDeal":
+	            			if(userSer.putDeal(jo.getString("flightId"), (Float) jo.get("dealPerc"), jo.getString("nickname")))
+	            				response = "Deal successfully added!";
+	            			else
+	            				response = "Unable to add the deal";
+	            			break;
+                    }            
+                } catch (RuntimeException | JSONException e) {
                     System.out.println(" [SERVER worker thread] " + e.toString());
                 } finally {
                     channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProps, response.getBytes("UTF-8")); // (exchange,routingKey,properties,body)
                     channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false); // (deliveryTag, multiple) acknowledge one or several received messages
+                    
+                    System.out.println(Utilities.getUsers());
+                    //System.out.println(Utilities.getAirports());
+                    System.out.println(Utilities.getFlights());
                     // RabbitMq consumer worker thread notifies the RPC server owner thread
                     synchronized (monitor) {
                         monitor.notify();
@@ -81,5 +153,21 @@ public class RPCServer {
             }
         }
     }
+    
+    
+    public static String flightsToString(List<List<Flight>> routes) {
+    	String routesString = "The following flights are registered: \n\n";
+    	
+    	for(List<Flight> route : routes) {
+    		routesString += "Route consisting of " + route.size() + " flights:\n";
+    		for(Flight f : route) {
+    			routesString += f.toString() + "\n";
+    		}
+    		routesString += "\n---------------------------------------------------------------------\n";
+    	}
+    	
+    	return routesString;
+    }
+    
     
 }

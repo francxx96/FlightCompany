@@ -43,7 +43,6 @@ public class Utilities {
 			e.printStackTrace();
 		}
 	}
-	
 	/*
 	public static void writeAirports(Map<AirportCity, Airport> map) {
 		try {
@@ -60,32 +59,48 @@ public class Utilities {
 	}
 	*/
 	
-	
-	
 	public static Map<AirportCity, Airport> getAirports() {
-		return (HashMap<AirportCity, Airport>) readFromFile(AIRPORTS_FILE);
+		Object obj = readFromFile(AIRPORTS_FILE);
+		if(obj == null)
+			return new HashMap<AirportCity, Airport>();
+		else
+			return (HashMap<AirportCity, Airport>) obj;
 	}
+	
 	public static Map<String, Flight> getFlights() {
-		return (HashMap<String, Flight>) readFromFile(FLIGHTS_FILE);
+		Object obj = readFromFile(FLIGHTS_FILE);
+		if(obj == null)
+			return new HashMap<String, Flight>();
+		else
+			return (HashMap<String, Flight>) obj;
 	}
 	
 	public static Map<String, User> getUsers() {
-		return (HashMap<String, User>) readFromFile(USERS_FILE);
+		Object obj = readFromFile(USERS_FILE);
+		if(obj == null)
+			return new HashMap<String, User>();
+		else
+			return (HashMap<String, User>) obj;
 	}
 	
 	public static Object readFromFile(String filename) {
-		Object data = new Object();
+		File file = new File(filename); 
+		Object data = null;
 		
-		try {
-			FileInputStream fis = new FileInputStream(new File(filename));
-			ObjectInputStream ois = new ObjectInputStream(fis);
-			
-			data = ois.readObject();
-
-		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+		if (file.exists()) {
+			try {
+				FileInputStream fis = new FileInputStream(file);
+				ObjectInputStream ois = new ObjectInputStream(fis);
+				
+				data = ois.readObject();
+	            ois.close();
+	            
+			} catch (IOException | ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+        }
 		
 		return data;
 	}
+	
 }

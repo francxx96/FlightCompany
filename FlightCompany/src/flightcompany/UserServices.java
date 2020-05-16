@@ -11,14 +11,19 @@ import java.util.Map;
 public class UserServices {
 	private Map<String, User> loggedUsers = new HashMap<String, User>();
 	
-	public boolean registrationRequest(String name, String surname, String nickname, String password) {
+	public boolean registrationRequest(String name, String surname, String nickname, String password, boolean admin) {
 		Map<String, User> users = Utilities.getUsers();
 		
     	if (users.containsKey(nickname))
     		return false;
     	
-		User newUsr = new User(name, surname, nickname, password);
-		users.put(nickname, newUsr);
+    	User newUsr;
+    	if(admin)
+    		newUsr = new Admin(name, surname, nickname, password);
+    	else
+    		newUsr = new Customer(name, surname, nickname, password);
+		
+    	users.put(nickname, newUsr);
 		Utilities.writeUsers(users);
 		return true;
 	}
@@ -75,7 +80,7 @@ public class UserServices {
 		return routes;
 	}
 	
-	public boolean bookFlightRequest(String flightId, String nickname) {
+	public boolean bookFlight(String flightId, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
 		Customer cst = (Customer) users.get(nickname);
@@ -95,7 +100,7 @@ public class UserServices {
 		return isBooked;
 	}
 	
-	public boolean cancelFlightRequest(String flightId, String nickname) {
+	public boolean cancelFlight(String flightId, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
 		Customer cst = (Customer) users.get(nickname);
@@ -120,7 +125,7 @@ public class UserServices {
 		return isCancelled;
 	}
 	
-	public boolean chargeMoneyRequest(float amount, String nickname) {
+	public boolean chargeMoney(float amount, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
 		Customer cst = (Customer) users.get(nickname);
@@ -135,7 +140,7 @@ public class UserServices {
 	}
 	
 	
-	public boolean addFlight(String nickname, String flightId, AirplaneModel planeModel, AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
+	public boolean addFlight(String flightId, AirplaneModel planeModel, AirportCity depCity, AirportCity arrCity, LocalDateTime depTime, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
 		Admin admin = (Admin) users.get(nickname);
@@ -145,7 +150,7 @@ public class UserServices {
 		return admin.addFlight(flightId, planeModel, depCity, arrCity, depTime);
 	}
 	
-	public boolean removeFlightRequest(String flightId, String nickname) {
+	public boolean removeFlight(String flightId, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
 		Admin admin = (Admin) users.get(nickname);
@@ -156,7 +161,7 @@ public class UserServices {
 	}
 	
 	// consuma richieste aggiornamento ritardi voli
-	public boolean putDelayRequest(String flightId, int minutes, String nickname) {
+	public boolean putDelay(String flightId, int minutes, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
 		Admin admin = (Admin) users.get(nickname);
@@ -167,7 +172,7 @@ public class UserServices {
 	}
 	
 	// consuma richieste promozioni -OK
-	public boolean putDealRequest(String flightId, float dealPerc, String nickname) {
+	public boolean putDeal(String flightId, float dealPerc, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
 		Admin admin = (Admin) users.get(nickname);
