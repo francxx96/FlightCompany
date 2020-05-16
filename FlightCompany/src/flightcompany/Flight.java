@@ -20,9 +20,7 @@ public class Flight implements Serializable {
     
     private Airport depAirport, arrAirport;
     private LocalDateTime depTime, arrTime;
-    
-    //private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm");
-    
+        
     public Flight(String id, Airplane plane, Airport depAirport, Airport arrAirport, LocalDateTime depTime) {
         this.id = id;
         this.plane = plane;
@@ -34,7 +32,7 @@ public class Flight implements Serializable {
         
         double dist = airportDistance(this.depAirport, this.arrAirport);
         this.cost = (int) (1 * dist);  // 1€ for each kilometer
-        this.arrTime = this.depTime.plusMinutes(round(dist)/15); // supposing a speed of 900 km/h = 15 km/min
+        this.arrTime = this.depTime.plusMinutes(round(dist/plane.getSpeed()));
     }
 
     public int getAvlSeats() {
