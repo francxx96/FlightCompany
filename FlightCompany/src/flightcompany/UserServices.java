@@ -20,7 +20,7 @@ public class UserServices {
     	
 		User newUsr = new User(name, surname, nickname, password);
 		users.put(nickname, newUsr);
-		Utilities.writeUsers(users, Utilities.USERS_FILE);
+		Utilities.writeUsers(users);
 		return true;
     	
 	}

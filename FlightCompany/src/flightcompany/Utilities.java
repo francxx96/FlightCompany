@@ -16,12 +16,12 @@ public class Utilities {
 	public final static String AIRPORTS_FILE = "airports.txt";
 	
 	
-	public static void writeFlights(Map<String, Flight> set, String filename) {
+	public static void writeFlights(Map<String, Flight> map) {
 		try {
-			FileOutputStream fos = new FileOutputStream(new File(filename));
+			FileOutputStream fos = new FileOutputStream(new File(FLIGHTS_FILE));
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-			oos.writeObject(set);
+			oos.writeObject(map);
 
 			oos.close();
 			fos.close();
@@ -30,12 +30,12 @@ public class Utilities {
 		}
 	}
 	
-	public static void writeUsers(Map<String, User> set, String filename) {
+	public static void writeUsers(Map<String, User> map) {
 		try {
-			FileOutputStream fos = new FileOutputStream(new File(filename));
+			FileOutputStream fos = new FileOutputStream(new File(USERS_FILE));
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-			oos.writeObject(set);
+			oos.writeObject(map);
 
 			oos.close();
 			fos.close();
@@ -45,12 +45,12 @@ public class Utilities {
 	}
 	
 	/*
-	public static void writeAirports(Map<AirportCity, Airport> set, String filename) {
+	public static void writeAirports(Map<AirportCity, Airport> map) {
 		try {
-			FileOutputStream fos = new FileOutputStream(new File(filename));
+			FileOutputStream fos = new FileOutputStream(new File(AIRPORTS_FILE));
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-			oos.writeObject(set);
+			oos.writeObject(map);
 
 			oos.close();
 			fos.close();
