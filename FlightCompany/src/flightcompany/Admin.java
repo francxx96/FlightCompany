@@ -24,7 +24,7 @@ public class Admin extends User {
 		
 		Flight newFlight = new Flight(id, plane, depAirport, arrAirport, depTime);
 		flights.put(id, newFlight);
-		Utilities.writeFlights(flights, Utilities.FLIGHTS_FILE);
+		Utilities.writeFlights(flights);
 		
 		return true;
 	}
@@ -36,6 +36,8 @@ public class Admin extends User {
 			return false;
 		
 		flights.remove(id);
+		Utilities.writeFlights(flights);
+		
 		return true;
 	}
 	
@@ -47,6 +49,8 @@ public class Admin extends User {
 			return false;
 		
 		f.setArrTime(f.getArrTime().plusMinutes(minutes));
+		Utilities.writeFlights(flights);
+		
 		return true;
 	}
 	
@@ -58,6 +62,8 @@ public class Admin extends User {
 			return false;
 
 		f.setCost((int) (f.getCost() * dealPerc));
+		Utilities.writeFlights(flights);
+		
 		return true;
 	}
 	

@@ -1,13 +1,16 @@
 package flightcompany;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UserServices {
 	private Map<String, User> loggedUsers = new HashMap<String, User>();
 	
-	// consuma richieste registrazione utente -OK
 	public boolean registrationRequest(String name, String surname, String nickname, String password) {
 		Map<String, User> users = Utilities.getUsers();
 		
@@ -16,12 +19,10 @@ public class UserServices {
     	
 		User newUsr = new User(name, surname, nickname, password);
 		users.put(nickname, newUsr);
-		Utilities.writeUsers(users, Utilities.USERS_FILE);
+		Utilities.writeUsers(users);
 		return true;
-    	
 	}
 	
-	// consuma richieste login
 	public boolean loginRequest(String nickname, String password) {
 		Map<String, User> users = Utilities.getUsers();
     	
@@ -33,7 +34,6 @@ public class UserServices {
 		return true;
     }
 	
-	// consuma richieste logout
 	public boolean logoutRequest(String nickname) {
 		
 		if (loggedUsers.remove(nickname) == null)
@@ -42,12 +42,39 @@ public class UserServices {
 		return true;
 	}
 	
-	// ======================================================== consuma richieste voli disponibili !!!!
-	public void searchRoute(AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
+	public List<List<Flight>> searchRoutes(AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
+		Map<AirportCity, Airport> airports = Utilities.getAirports();
 		
+		Airport depAirport = airports.get(depCity);
+		Airport arrAirport = airports.get(arrCity);
+		return searchRoutes(depAirport, arrAirport, depTime, new ArrayList<Airport>());
 	}
 	
-	// consuma richieste prenotazione volo
+	public List<List<Flight>> searchRoutes(Airport depAirp, Airport arrAirp, LocalDateTime depTime, List<Airport> visitedAirports) {
+		List<List<Flight>> routes = new ArrayList<List<Flight>>();
+		
+		Collection<Flight> departures = depAirp.getFlights().values();
+		
+		for (Flight f : departures) {
+			if (!visitedAirports.contains(f.getArrAirport()) && f.getDepTime().isAfter(depTime)) {
+				if (f.getArrAirport() == arrAirp)
+					routes.add(Arrays.asList(f));
+				
+				else {
+					visitedAirports.add(depAirp);
+					List<List<Flight>> subroutes = searchRoutes(f.getArrAirport(), arrAirp, f.getDepTime(), visitedAirports);
+					
+					for (List<Flight> r : subroutes) {
+						r.add(0, f);
+						routes.add(r);
+					}
+				}
+			}
+		}
+		
+		return routes;
+	}
+	
 	public boolean bookFlightRequest(String flightId, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
@@ -61,10 +88,13 @@ public class UserServices {
 		if (f == null)
 			return false;
 		
-		return cst.bookFlight(f);
+		boolean isBooked = cst.bookFlight(f);
+		if (isBooked)
+			Utilities.writeUsers(users);
+		
+		return isBooked;
 	}
 	
-	// consuma richieste cancellazione volo
 	public boolean cancelFlightRequest(String flightId, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
@@ -78,10 +108,18 @@ public class UserServices {
 		if (f == null)
 			return false;
 		
-		return cst.cancelFlight(f);
+		boolean isCancelled = cst.cancelFlight(f);
+		if (isCancelled) {
+			// The customer will receive a refund if he cancels the reservation at least one hour before departure
+			if (f.getDepTime().isBefore(LocalDateTime.now().plusHours(1)))
+				cst.setMoney(cst.getMoney()+f.getCost());	
+			
+			Utilities.writeUsers(users);
+		}
+		
+		return isCancelled;
 	}
 	
-	// consuma richieste aggiornamento saldo
 	public boolean chargeMoneyRequest(float amount, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
@@ -89,11 +127,14 @@ public class UserServices {
 		if (cst == null)
 			return false;
 		
-		return cst.chargeMoney(amount);
+		boolean isCharged = cst.chargeMoney(amount);
+		if (isCharged)
+			Utilities.writeUsers(users);
+		
+		return isCharged;
 	}
 	
 	
-	// consuma richieste registrazione voli
 	public boolean addFlight(String nickname, String flightId, AirplaneModel planeModel, AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
 		Map<String, User> users = Utilities.getUsers();
 		
@@ -104,7 +145,6 @@ public class UserServices {
 		return admin.addFlight(flightId, planeModel, depCity, arrCity, depTime);
 	}
 	
-	// consuma richieste cancellazione voli
 	public boolean removeFlightRequest(String flightId, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
