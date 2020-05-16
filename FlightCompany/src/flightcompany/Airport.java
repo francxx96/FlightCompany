@@ -1,9 +1,9 @@
 package flightcompany;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 
 public class Airport implements Serializable {
@@ -12,14 +12,14 @@ public class Airport implements Serializable {
 	private AirportCity city;
     private double longitude;
     private double latitude;
-    private Set<Flight> flights;
+    private Map<String, Flight> flights;
 
     public Airport(AirportCity city, double longitude, double latitude) {
         this.city = city;
         this.longitude = longitude;
         this.latitude = latitude;
         
-        this.flights = new HashSet<>();
+        this.flights = new HashMap<>();
     }
 
     public AirportCity getCity() {
@@ -34,12 +34,16 @@ public class Airport implements Serializable {
         return latitude;
     }
     
+    public Map<String, Flight> getFlights() {
+        return flights;
+    }
+    
     public void addFlight(Flight f) {
-        flights.add(f);
+        flights.put(f.getId(), f);
     }
     
     public boolean removeFlight(Flight f) {
-        return flights.remove(f);
+        return flights.remove(f.getId()) != null;
     }
 
     @Override

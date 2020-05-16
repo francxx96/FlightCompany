@@ -1,7 +1,11 @@
 package flightcompany;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UserServices {
@@ -42,9 +46,38 @@ public class UserServices {
 		return true;
 	}
 	
-	// ======================================================== consuma richieste voli disponibili !!!!
-	public void searchRoute(AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
+	// consuma richieste voli disponibili
+	public List<List<Flight>> searchRoutes(AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
+		Map<AirportCity, Airport> airports = Utilities.getAirports();
 		
+		Airport depAirport = airports.get(depCity);
+		Airport arrAirport = airports.get(arrCity);
+		return searchRoutes(depAirport, arrAirport, depTime, new ArrayList<Airport>());
+	}
+	
+	public List<List<Flight>> searchRoutes(Airport depAirp, Airport arrAirp, LocalDateTime depTime, List<Airport> visitedAirports) {
+		List<List<Flight>> routes = new ArrayList<List<Flight>>();
+		
+		Collection<Flight> departures = depAirp.getFlights().values();
+		
+		for (Flight f : departures) {
+			if (!visitedAirports.contains(f.getArrAirport()) && f.getDepTime().isAfter(depTime)) {
+				if (f.getArrAirport() == arrAirp)
+					routes.add(Arrays.asList(f));
+				
+				else {
+					visitedAirports.add(depAirp);
+					List<List<Flight>> subroutes = searchRoutes(f.getArrAirport(), arrAirp, f.getDepTime(), visitedAirports);
+					
+					for (List<Flight> r : subroutes) {
+						r.add(0, f);
+						routes.add(r);
+					}
+				}
+			}
+		}
+		
+		return routes;
 	}
 	
 	// consuma richieste prenotazione volo
