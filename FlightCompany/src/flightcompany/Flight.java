@@ -49,6 +49,10 @@ public class Flight implements Serializable {
         return false;
     }
     
+    public boolean removePassenger(Customer p) {
+    	return passengers.remove(p);
+    }
+    
     public void addDelay(int minutes) {
     	this.arrTime.plusMinutes(minutes);
     }

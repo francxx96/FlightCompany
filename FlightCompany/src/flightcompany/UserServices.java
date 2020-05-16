@@ -16,7 +16,7 @@ public class UserServices {
 	
 	public UserServices() {
 		this.users = Utilities.getUsers();
-		this.loggedUsers = new HashMap<String, User>();
+		this.loggedUsers = new HashMap<String, User>(); // Valutare se implementare gli utenti loggati come flag nella classe User
 		this.flights = Utilities.getFlights();
 		this.airports = Utilities.getAirports();
 	}
@@ -27,7 +27,7 @@ public class UserServices {
     		return false;
     	
 		User newUsr = new User(name, surname, nickname, password);
-		users.put(nickname, newUsr);
+		users.put(nickname, newUsr); // Valutare se aggiungere l'utente anche direttamente ai loggedUsers
 		Utilities.writeUsers(users);
 		return true;
 	}
@@ -69,7 +69,7 @@ public class UserServices {
 				
 				else {
 					visitedAirports.add(depAirp);
-					List<List<Flight>> subroutes = searchRoutes(f.getArrAirport(), arrAirp, f.getDepTime(), visitedAirports);
+					List<List<Flight>> subroutes = searchRoutes(f.getArrAirport(), arrAirp, f.getArrTime(), visitedAirports);
 					
 					for (List<Flight> r : subroutes) {
 						r.add(0, f);
@@ -84,7 +84,7 @@ public class UserServices {
 	
 	public boolean bookFlightRequest(String flightId, String nickname) {
 		
-		Customer cst = (Customer) users.get(nickname);
+		Customer cst = (Customer) loggedUsers.get(nickname);
 		if (cst == null)
 			return false;
 				
@@ -93,15 +93,20 @@ public class UserServices {
 			return false;
 		
 		boolean isBooked = cst.bookFlight(f);
-		if (isBooked)
+		if (isBooked) {
+			users.put(cst.getNickname(), cst);
+			loggedUsers.put(cst.getNickname(), cst);
+			flights.put(f.getId(), f);
 			Utilities.writeUsers(users);
+			Utilities.writeFlights(flights);
+		}
 		
 		return isBooked;
 	}
 	
 	public boolean cancelFlightRequest(String flightId, String nickname) {
 		
-		Customer cst = (Customer) users.get(nickname);
+		Customer cst = (Customer) loggedUsers.get(nickname);
 		if (cst == null)
 			return false;
 				
@@ -113,9 +118,13 @@ public class UserServices {
 		if (isCancelled) {
 			// The customer will receive a refund if he cancels the reservation at least one hour before departure
 			if (f.getDepTime().isBefore(LocalDateTime.now().plusHours(1)))
-				cst.setMoney(cst.getMoney()+f.getCost());	
+				cst.setMoney(cst.getMoney()+f.getCost());
 			
+			users.put(cst.getNickname(), cst);
+			loggedUsers.put(cst.getNickname(), cst);
+			flights.put(f.getId(), f);
 			Utilities.writeUsers(users);
+			Utilities.writeFlights(flights);
 		}
 		
 		return isCancelled;
@@ -123,14 +132,16 @@ public class UserServices {
 	
 	public boolean chargeMoneyRequest(float amount, String nickname) {
 		
-		Customer cst = (Customer) users.get(nickname);
+		Customer cst = (Customer) loggedUsers.get(nickname);
 		if (cst == null)
 			return false;
 		
 		boolean isCharged = cst.chargeMoney(amount);
-		if (isCharged)
+		if (isCharged) {
+			users.put(cst.getNickname(), cst);
+			loggedUsers.put(cst.getNickname(), cst);
 			Utilities.writeUsers(users);
-		
+		}
 		return isCharged;
 	}
 	
@@ -146,7 +157,7 @@ public class UserServices {
 	 */
 	public boolean addFlightRequest(String nickname, String flightId, AirplaneModel planeModel, AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
 		
-		Admin admin = (Admin) users.get(nickname);
+		Admin admin = (Admin) loggedUsers.get(nickname);
 		if (admin == null)
 			return false;
 		
@@ -161,9 +172,11 @@ public class UserServices {
 		
 		Airplane plane = new Airplane(planeModel);
 		Flight newFlight = new Flight(flightId, plane, depAirport, arrAirport, depTime);
+		flights.put(newFlight.getId(), newFlight);
 		Utilities.writeFlights(flights);
 
 		depAirport.addFlight(newFlight);
+		airports.put(depAirport.getCity(), depAirport);
 		Utilities.writeAirports(airports);
 		
 		return true;
@@ -176,9 +189,8 @@ public class UserServices {
 	 * @return true if the deletion of the existing flight has success, false otherwise
 	 */
 	public boolean removeFlightRequest(String flightId, String nickname) {
-		Map<String, User> users = Utilities.getUsers();
 		
-		Admin admin = (Admin) users.get(nickname);
+		Admin admin = (Admin) loggedUsers.get(nickname);
 		if (admin == null)
 			return false;
 		
@@ -190,6 +202,7 @@ public class UserServices {
 		
 		Airport depAirport = airports.get(removedFlight.getDepAirport().getCity());
 		depAirport.removeFlight(removedFlight);
+		airports.put(depAirport.getCity(), depAirport);
 		Utilities.writeAirports(airports);
 		
 		return true;
@@ -214,6 +227,7 @@ public class UserServices {
 		
 		f.setDepTime(f.getDepTime().plusMinutes(minutes));
 		f.setArrTime(f.getArrTime().plusMinutes(minutes));
+		flights.put(f.getId(), f);
 		Utilities.writeFlights(flights);
 		
 		return true;
@@ -240,6 +254,7 @@ public class UserServices {
 			return false;
 		
 		f.setCost(f.getCost() * dealPerc);
+		flights.put(f.getId(), f);
 		Utilities.writeFlights(flights);
 		
 		return true;
