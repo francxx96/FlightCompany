@@ -123,7 +123,7 @@ public class RPCServer {
 	            			break;
                     }            
                 } catch (RuntimeException | JSONException e) {
-                    System.out.println(" [SERVER worker thread] " + e.toString());
+                    System.out.println(" [SERVER worker thread] " + e);
                 } finally {
                     channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProps, response.getBytes("UTF-8")); // (exchange,routingKey,properties,body)
                     channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false); // (deliveryTag, multiple) acknowledge one or several received messages
@@ -147,7 +147,7 @@ public class RPCServer {
                         monitor.wait();
                         System.out.println(" [SERVER] Call Executed");
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    	System.out.println(e);
                     }
                 }
             }

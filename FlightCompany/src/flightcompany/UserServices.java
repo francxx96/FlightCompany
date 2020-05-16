@@ -99,9 +99,9 @@ public class UserServices {
 		
 		boolean isBooked = cst.bookFlight(f);
 		if (isBooked) {
-			users.put(cst.getNickname(), cst);
-			loggedUsers.put(cst.getNickname(), cst);
-			flights.put(f.getId(), f);
+			//users.put(cst.getNickname(), cst);
+			//loggedUsers.put(cst.getNickname(), cst);
+			//flights.put(f.getId(), f);
 			Utilities.writeUsers(users);
 			Utilities.writeFlights(flights);
 		}
@@ -125,9 +125,9 @@ public class UserServices {
 			if (f.getDepTime().isBefore(LocalDateTime.now().plusHours(1)))
 				cst.setMoney(cst.getMoney()+f.getCost());
 			
-			users.put(cst.getNickname(), cst);
-			loggedUsers.put(cst.getNickname(), cst);
-			flights.put(f.getId(), f);
+			//users.put(cst.getNickname(), cst);
+			//loggedUsers.put(cst.getNickname(), cst);
+			//flights.put(f.getId(), f);
 			Utilities.writeUsers(users);
 			Utilities.writeFlights(flights);
 		}
@@ -143,8 +143,8 @@ public class UserServices {
 		
 		boolean isCharged = cst.chargeMoney(amount);
 		if (isCharged) {
-			users.put(cst.getNickname(), cst);
-			loggedUsers.put(cst.getNickname(), cst);
+			//users.put(cst.getNickname(), cst);
+			//loggedUsers.put(cst.getNickname(), cst);
 			Utilities.writeUsers(users);
 		}
 		return isCharged;
@@ -177,11 +177,11 @@ public class UserServices {
 		
 		Airplane plane = new Airplane(planeModel);
 		Flight newFlight = new Flight(flightId, plane, depAirport, arrAirport, depTime);
-		flights.put(newFlight.getId(), newFlight);
+		//flights.put(newFlight.getId(), newFlight);
 		Utilities.writeFlights(flights);
 
 		depAirport.addFlight(newFlight);
-		airports.put(depAirport.getCity(), depAirport);
+		//airports.put(depAirport.getCity(), depAirport);
 		Utilities.writeAirports(airports);
 		
 		return true;
@@ -206,7 +206,7 @@ public class UserServices {
 		
 		Airport depAirport = airports.get(removedFlight.getDepAirport().getCity());
 		depAirport.removeFlight(removedFlight);
-		airports.put(depAirport.getCity(), depAirport);
+		//airports.put(depAirport.getCity(), depAirport);
 		Utilities.writeAirports(airports);
 		
 		return true;
@@ -231,7 +231,7 @@ public class UserServices {
 		
 		f.setDepTime(f.getDepTime().plusMinutes(minutes));
 		f.setArrTime(f.getArrTime().plusMinutes(minutes));
-		flights.put(f.getId(), f);
+		//flights.put(f.getId(), f);
 		Utilities.writeFlights(flights);
 		
 		return true;
@@ -257,7 +257,7 @@ public class UserServices {
 			return false;
 		
 		f.setCost(f.getCost() * dealPerc);
-		flights.put(f.getId(), f);
+		//flights.put(f.getId(), f);
 		Utilities.writeFlights(flights);
 		
 		return true;
