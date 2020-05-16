@@ -14,7 +14,7 @@ public class Flight implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String id;
-    private int cost;
+    private double cost;
     private Airplane plane;
     private Set<User> passengers;
     
@@ -31,7 +31,7 @@ public class Flight implements Serializable {
         this.passengers = new HashSet<>();
         
         double dist = airportDistance(this.depAirport, this.arrAirport);
-        this.cost = (int) (1 * dist);  // 1€ for each kilometer
+        this.cost = 1 * dist;  // 1€ for each kilometer
         this.arrTime = this.depTime.plusMinutes(round(dist/plane.getSpeed()));
     }
 
@@ -85,7 +85,7 @@ public class Flight implements Serializable {
         return id;
     }
 
-    public int getCost() {
+    public double getCost() {
         return cost;
     }
 
