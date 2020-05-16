@@ -43,7 +43,8 @@ public class Utilities {
 			e.printStackTrace();
 		}
 	}
-	/*
+	
+	
 	public static void writeAirports(Map<AirportCity, Airport> map) {
 		try {
 			FileOutputStream fos = new FileOutputStream(new File(AIRPORTS_FILE));
@@ -57,7 +58,6 @@ public class Utilities {
 			e.printStackTrace();
 		}
 	}
-	*/
 	
 	public static Map<AirportCity, Airport> getAirports() {
 		Object obj = readFromFile(AIRPORTS_FILE);

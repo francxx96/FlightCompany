@@ -17,21 +17,17 @@ public class Customer extends User {
 	}
 
     public boolean bookFlight(Flight f) {
-    	if (money < f.getCost())
-    		return false;
-    	
-        f.addPassenger(this);
-        bookedFlights.add(f);
-        return true;
+    	if (bookedFlights.add(f) && f.addPassenger(this) && money >= f.getCost())
+    		return true;
+
+    	return false;
     }
     
     public boolean cancelFlight(Flight f) {
-    	boolean isRemoved = bookedFlights.remove(f);
+    	if (bookedFlights.remove(f) && f.removePassenger(this))
+    		return true;
     	
-    	if (!isRemoved)
-    		return false;
-    	
-    	return true;
+    	return false;
     }
     
     public boolean chargeMoney(float amount) {

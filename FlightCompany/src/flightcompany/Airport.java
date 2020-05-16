@@ -22,10 +22,26 @@ public class Airport implements Serializable {
         this.flights = new HashMap<>();
     }
 
+    /**
+     * 
+     * @param f
+     */
+    public void addFlight(Flight f) {
+        flights.put(f.getId(), f);
+    }
+    
+    /**
+     * 
+     * @param f
+     */
+    public void removeFlight(Flight f) {
+        flights.remove(f.getId());
+    }
+    
     public AirportCity getCity() {
         return city;
     }
-
+    
     public double getLongitude() {
         return longitude;
     }
@@ -36,14 +52,6 @@ public class Airport implements Serializable {
     
     public Map<String, Flight> getFlights() {
         return flights;
-    }
-    
-    public void addFlight(Flight f) {
-        flights.put(f.getId(), f);
-    }
-    
-    public boolean removeFlight(Flight f) {
-        return flights.remove(f.getId()) != null;
     }
 
     @Override
