@@ -20,9 +20,8 @@ public class Customer extends User {
     	if (money < f.getCost())
     		return false;
     	
-        money -= f.getCost();
-        bookedFlights.add(f);
         f.addPassenger(this);
+        bookedFlights.add(f);
         return true;
     }
     
