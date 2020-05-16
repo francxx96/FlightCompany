@@ -36,6 +36,8 @@ public class Admin extends User {
 			return false;
 		
 		flights.remove(id);
+		Utilities.writeFlights(flights);
+		
 		return true;
 	}
 	
@@ -47,6 +49,8 @@ public class Admin extends User {
 			return false;
 		
 		f.setArrTime(f.getArrTime().plusMinutes(minutes));
+		Utilities.writeFlights(flights);
+		
 		return true;
 	}
 	
@@ -58,6 +62,8 @@ public class Admin extends User {
 			return false;
 
 		f.setCost((int) (f.getCost() * dealPerc));
+		Utilities.writeFlights(flights);
+		
 		return true;
 	}
 	

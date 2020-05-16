@@ -26,7 +26,12 @@ public class Customer extends User {
     }
     
     public boolean cancelFlight(Flight f) {
-    	return bookedFlights.remove(f);
+    	boolean isRemoved = bookedFlights.remove(f);
+    	
+    	if (!isRemoved)
+    		return false;
+    	
+    	return true;
     }
     
     public boolean chargeMoney(float amount) {

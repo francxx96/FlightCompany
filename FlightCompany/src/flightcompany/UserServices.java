@@ -11,7 +11,6 @@ import java.util.Map;
 public class UserServices {
 	private Map<String, User> loggedUsers = new HashMap<String, User>();
 	
-	// consuma richieste registrazione utente -OK
 	public boolean registrationRequest(String name, String surname, String nickname, String password) {
 		Map<String, User> users = Utilities.getUsers();
 		
@@ -22,10 +21,8 @@ public class UserServices {
 		users.put(nickname, newUsr);
 		Utilities.writeUsers(users);
 		return true;
-    	
 	}
 	
-	// consuma richieste login
 	public boolean loginRequest(String nickname, String password) {
 		Map<String, User> users = Utilities.getUsers();
     	
@@ -37,7 +34,6 @@ public class UserServices {
 		return true;
     }
 	
-	// consuma richieste logout
 	public boolean logoutRequest(String nickname) {
 		
 		if (loggedUsers.remove(nickname) == null)
@@ -46,7 +42,6 @@ public class UserServices {
 		return true;
 	}
 	
-	// consuma richieste voli disponibili
 	public List<List<Flight>> searchRoutes(AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
 		Map<AirportCity, Airport> airports = Utilities.getAirports();
 		
@@ -80,7 +75,6 @@ public class UserServices {
 		return routes;
 	}
 	
-	// consuma richieste prenotazione volo
 	public boolean bookFlightRequest(String flightId, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
@@ -94,10 +88,13 @@ public class UserServices {
 		if (f == null)
 			return false;
 		
-		return cst.bookFlight(f);
+		boolean isBooked = cst.bookFlight(f);
+		if (isBooked)
+			Utilities.writeUsers(users);
+		
+		return isBooked;
 	}
 	
-	// consuma richieste cancellazione volo
 	public boolean cancelFlightRequest(String flightId, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
@@ -112,14 +109,17 @@ public class UserServices {
 			return false;
 		
 		boolean isCancelled = cst.cancelFlight(f);
-		if (isCancelled && f.getDepTime().isBefore(LocalDateTime.now().plusHours(1)))
+		if (isCancelled) {
 			// The customer will receive a refund if he cancels the reservation at least one hour before departure
-			cst.setMoney(cst.getMoney()+f.getCost());	
+			if (f.getDepTime().isBefore(LocalDateTime.now().plusHours(1)))
+				cst.setMoney(cst.getMoney()+f.getCost());	
+			
+			Utilities.writeUsers(users);
+		}
 		
 		return isCancelled;
 	}
 	
-	// consuma richieste aggiornamento saldo
 	public boolean chargeMoneyRequest(float amount, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
@@ -127,11 +127,14 @@ public class UserServices {
 		if (cst == null)
 			return false;
 		
-		return cst.chargeMoney(amount);
+		boolean isCharged = cst.chargeMoney(amount);
+		if (isCharged)
+			Utilities.writeUsers(users);
+		
+		return isCharged;
 	}
 	
 	
-	// consuma richieste registrazione voli
 	public boolean addFlight(String nickname, String flightId, AirplaneModel planeModel, AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
 		Map<String, User> users = Utilities.getUsers();
 		
@@ -142,7 +145,6 @@ public class UserServices {
 		return admin.addFlight(flightId, planeModel, depCity, arrCity, depTime);
 	}
 	
-	// consuma richieste cancellazione voli
 	public boolean removeFlightRequest(String flightId, String nickname) {
 		Map<String, User> users = Utilities.getUsers();
 		
