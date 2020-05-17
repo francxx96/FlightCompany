@@ -11,17 +11,17 @@ import org.json.JSONObject;
 import com.rabbitmq.client.*;
 
 public class RPCServer {
-
+	
     private static final String RPC_QUEUE_NAME = "rpc_queue";
     private static final UserServices userSer = new UserServices();
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
+			
     public static void main(String[] argv) throws Exception {
     	ConnectionFactory factory = new ConnectionFactory(); // "factory" class to facilitate opening a Connection to an AMQP broker
         factory.setHost("localhost");
         
         try (Connection connection = factory.newConnection();
-             Channel channel = connection.createChannel()) {
+        		Channel channel = connection.createChannel()) {
             channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null); // (queue, passive,durable,exclusive,autoDelete,arguments)
             channel.queuePurge(RPC_QUEUE_NAME); // Purges the contents of the given queue (all of its messages deleted)
 
@@ -116,7 +116,7 @@ public class RPCServer {
 	            				response = "Unable to add the delay";
 	            			break;
 	            		case "putDeal":
-	            			if(userSer.putDeal(jo.getString("flightId"), (Float) jo.get("dealPerc"), jo.getString("nickname")))
+	            			if(userSer.putDeal(jo.getString("flightId"), (Double) jo.get("dealPerc"), jo.getString("nickname")))
 	            				response = "Deal successfully added!";
 	            			else
 	            				response = "Unable to add the deal";
