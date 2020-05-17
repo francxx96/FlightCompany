@@ -136,7 +136,7 @@ public class UserServices {
 	}
 	
 
-	public boolean chargeMoney(float amount, String nickname) {
+	public boolean chargeMoney(double amount, String nickname) {
 		Customer cst = (Customer) loggedUsers.get(nickname);
 		if (cst == null)
 			return false;

@@ -88,7 +88,7 @@ public class RPCServer {
 	            				response = "Please, choose another flight";
 	            			break;
 	            		case "charge":
-	            			if(userSer.chargeMoney((Float) jo.get("amount"), jo.getString("nickname")))
+	            			if(userSer.chargeMoney((Double) jo.get("amount"), jo.getString("nickname")))
 	            				response = "Account updated successfully!";
 	            			else
 	            				response = "Unable to update account";
