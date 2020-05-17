@@ -37,7 +37,7 @@ public class RPCClient implements AutoCloseable {
         try {
         	RPCClient rpc = new RPCClient();
         } catch (IOException | TimeoutException | JSONException | InterruptedException e) {
-            e.printStackTrace();
+        	System.out.println(e);
         }
     }
     

@@ -88,7 +88,7 @@ public class RPCServer {
 	            				response = "Please, choose another flight";
 	            			break;
 	            		case "charge":
-	            			if(userSer.chargeMoney((Float) jo.get("amount"), jo.getString("nickname")))
+	            			if(userSer.chargeMoney(Float.parseFloat(jo.getString("amount")), jo.getString("nickname")))
 	            				response = "Account updated successfully!";
 	            			else
 	            				response = "Unable to update account";
@@ -129,7 +129,7 @@ public class RPCServer {
                     channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false); // (deliveryTag, multiple) acknowledge one or several received messages
                     
                     System.out.println(Utilities.getUsers());
-                    //System.out.println(Utilities.getAirports());
+                    System.out.println(Utilities.getAirports());
                     System.out.println(Utilities.getFlights());
                     // RabbitMq consumer worker thread notifies the RPC server owner thread
                     synchronized (monitor) {

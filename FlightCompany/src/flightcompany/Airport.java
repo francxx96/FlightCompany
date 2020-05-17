@@ -54,12 +54,13 @@ public class Airport implements Serializable {
         return flights;
     }
 
-    @Override
-    public String toString() {
-        return city.toString();
-    }
     
     @Override
+	public String toString() {
+		return " Airport[city=" + city + ", lon=" + longitude + ", lat=" + latitude + "]";
+	}
+
+	@Override
     public int hashCode() {
         int hash = 5;
         hash = 41 * hash + Objects.hashCode(this.city);

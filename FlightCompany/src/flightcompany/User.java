@@ -7,20 +7,22 @@ import java.util.Objects;
 public abstract class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private String name, surname;
-    private String nickname, password;
+	private String name, surname, nickname, password;
+	private transient boolean login;
 
     public User(String name, String surname, String nickname, String password) {
         this.name = name;
         this.surname = surname;
         this.nickname = nickname;
         this.password = password;
+        this.login = false;
     }
     
-    
-    @Override
+
+	@Override
 	public String toString() {
-		return "[name=" + name + ", surname=" + surname + ", nickname=" + nickname + ", password=" + password + "]";
+		return " [name=" + name + ", surname=" + surname + ", nickname=" + nickname + ", password=" + password
+				+ ", login=" + login + "]";
 	}
 
 	public String getName() {
@@ -39,7 +41,16 @@ public abstract class User implements Serializable {
     	return password;
     }
     
-    @Override
+    public boolean isLogin() {
+		return login;
+	}
+
+	public void setLogin(boolean login) {
+		this.login = login;
+	}
+
+
+	@Override
     public int hashCode() {
         int hash = 3;
         hash = 97 * hash + Objects.hashCode(this.nickname);

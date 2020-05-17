@@ -16,7 +16,7 @@ public class UserServices {
 	
 	public UserServices() {
 		this.users = Utilities.getUsers();
-		this.loggedUsers = new HashMap<String, User>(); // Valutare se implementare gli utenti loggati come flag nella classe User
+		this.loggedUsers = new HashMap<String, User>();
 		this.flights = Utilities.getFlights();
 		this.airports = Utilities.getAirports();
 	}
@@ -32,7 +32,7 @@ public class UserServices {
     	else
     		newUsr = new Customer(name, surname, nickname, password);
 		
-		users.put(nickname, newUsr); // Valutare se aggiungere l'utente anche direttamente ai loggedUsers
+		users.put(nickname, newUsr);
 		Utilities.writeUsers(users);
 		return true;
 	}
@@ -43,15 +43,19 @@ public class UserServices {
     	if (usr == null || !usr.getPassword().equals(password))
     		return false;
     	
+    	usr.setLogin(true);
 		loggedUsers.put(usr.getNickname(), usr);
 		return true;
     }
 	
 	public boolean logoutRequest(String nickname) {
-		
-		if (loggedUsers.remove(nickname) == null)
+		User usr = loggedUsers.get(nickname);
+
+		if (usr == null)
 			return false;
 		
+		usr.setLogin(false);
+		loggedUsers.remove(nickname);
 		return true;
 	}
 	
@@ -163,10 +167,8 @@ public class UserServices {
 	public boolean addFlight(String flightId, AirplaneModel planeModel, AirportCity depCity, AirportCity arrCity, LocalDateTime depTime, String nickname) {
 
 		Admin admin = (Admin) loggedUsers.get(nickname);
-		if (admin == null)
-			return false;
-		
-		if (!flights.containsKey(flightId))
+
+		if (admin == null || flights.containsKey(flightId))
 			return false;
 		
 		Airport depAirport = airports.get(depCity);
@@ -174,12 +176,11 @@ public class UserServices {
 		
 		if (depAirport == null || arrAirport == null)
 			return false;
-		
+
 		Airplane plane = new Airplane(planeModel);
 		Flight newFlight = new Flight(flightId, plane, depAirport, arrAirport, depTime);
-		//flights.put(newFlight.getId(), newFlight);
+		flights.put(newFlight.getId(), newFlight);
 		Utilities.writeFlights(flights);
-
 		depAirport.addFlight(newFlight);
 		//airports.put(depAirport.getCity(), depAirport);
 		Utilities.writeAirports(airports);
@@ -195,10 +196,8 @@ public class UserServices {
 	 */
 	public boolean removeFlight(String flightId, String nickname) {	
 		Admin admin = (Admin) loggedUsers.get(nickname);
-		if (admin == null)
-			return false;
 		
-		if (!flights.containsKey(flightId))
+		if (admin == null || !flights.containsKey(flightId))
 			return false;
 		
 		Flight removedFlight = flights.remove(flightId);
