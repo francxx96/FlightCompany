@@ -126,7 +126,7 @@ public class UserServices {
 		boolean isCancelled = cst.cancelFlight(f);
 		if (isCancelled) {
 			// The customer will receive a refund if he cancels the reservation at least one hour before departure
-			if (f.getDepTime().isBefore(LocalDateTime.now().plusHours(1)))
+			if (f.getDepTime().isAfter(LocalDateTime.now().plusHours(1)))
 				cst.setMoney(cst.getMoney()+f.getCost());
 			
 			//users.put(cst.getNickname(), cst);
@@ -140,7 +140,7 @@ public class UserServices {
 	}
 	
 
-	public boolean chargeMoney(float amount, String nickname) {
+	public boolean chargeMoney(double amount, String nickname) {
 		Customer cst = (Customer) loggedUsers.get(nickname);
 		if (cst == null)
 			return false;

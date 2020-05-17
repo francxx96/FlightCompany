@@ -30,7 +30,7 @@ public class Customer extends User {
     	return false;
     }
     
-    public boolean chargeMoney(float amount) {
+    public boolean chargeMoney(double amount) {
         if (amount <= 0)
         	return false;
         
