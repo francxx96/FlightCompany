@@ -10,13 +10,11 @@ import java.util.Map;
 
 public class UserServices {
 	private Map<String, User> users;
-	private Map<String, User> loggedUsers;
 	private Map<String, Flight> flights;
 	private Map<AirportCity, Airport> airports;
 	
 	public UserServices() {
 		this.users = Utilities.getUsers();
-		this.loggedUsers = new HashMap<String, User>();
 		this.flights = Utilities.getFlights();
 		this.airports = Utilities.getAirports();
 	}
@@ -44,18 +42,16 @@ public class UserServices {
     		return false;
     	
     	usr.setLogin(true);
-		loggedUsers.put(usr.getNickname(), usr);
 		return true;
     }
 	
 	public boolean logoutRequest(String nickname) {
-		User usr = loggedUsers.get(nickname);
+		User usr = users.get(nickname);
 
-		if (usr == null)
+		if (!usr.isLogin())
 			return false;
 		
 		usr.setLogin(false);
-		loggedUsers.remove(nickname);
 		return true;
 	}
 	
@@ -93,8 +89,8 @@ public class UserServices {
 	
 	
 	public boolean bookFlight(String flightId, String nickname) {
-		Customer cst = (Customer) loggedUsers.get(nickname);
-		if (cst == null)
+		Customer cst = (Customer) users.get(nickname);
+		if (cst == null || !cst.isLogin())
 			return false;
 				
 		Flight f = flights.get(flightId);
@@ -115,10 +111,10 @@ public class UserServices {
 	
 
 	public boolean cancelFlight(String flightId, String nickname) {
-		Customer cst = (Customer) loggedUsers.get(nickname);
-		if (cst == null)
+		Customer cst = (Customer) users.get(nickname);
+		if (cst == null || !cst.isLogin())
 			return false;
-				
+		
 		Flight f = flights.get(flightId);
 		if (f == null)
 			return false;
@@ -141,8 +137,8 @@ public class UserServices {
 	
 
 	public boolean chargeMoney(double amount, String nickname) {
-		Customer cst = (Customer) loggedUsers.get(nickname);
-		if (cst == null)
+		Customer cst = (Customer) users.get(nickname);
+		if (cst == null || !cst.isLogin())
 			return false;
 		
 		boolean isCharged = cst.chargeMoney(amount);
@@ -166,9 +162,9 @@ public class UserServices {
 	 */
 	public boolean addFlight(String flightId, AirplaneModel planeModel, AirportCity depCity, AirportCity arrCity, LocalDateTime depTime, String nickname) {
 
-		Admin admin = (Admin) loggedUsers.get(nickname);
+		Admin admin = (Admin) users.get(nickname);
 
-		if (admin == null || flights.containsKey(flightId))
+		if (admin == null || !admin.isLogin() || flights.containsKey(flightId))
 			return false;
 		
 		Airport depAirport = airports.get(depCity);
@@ -195,9 +191,9 @@ public class UserServices {
 	 * @return true if the deletion of the existing flight has success, false otherwise
 	 */
 	public boolean removeFlight(String flightId, String nickname) {	
-		Admin admin = (Admin) loggedUsers.get(nickname);
+		Admin admin = (Admin) users.get(nickname);
 		
-		if (admin == null || !flights.containsKey(flightId))
+		if (admin == null || !admin.isLogin() || !flights.containsKey(flightId))
 			return false;
 		
 		Flight removedFlight = flights.remove(flightId);
@@ -221,7 +217,7 @@ public class UserServices {
 	 */
 	public boolean putDelay(String flightId, int minutes, String nickname) {
 		Admin admin = (Admin) users.get(nickname);
-		if (admin == null)
+		if (admin == null || !admin.isLogin())
 			return false;
 		
 		Flight f = flights.get(flightId);
@@ -245,7 +241,7 @@ public class UserServices {
 	 */
 	public boolean putDeal(String flightId, double dealPerc, String nickname) {
 		Admin admin = (Admin) users.get(nickname);
-		if (admin == null)
+		if (admin == null || !admin.isLogin())
 			return false;
 		
 		Flight f = flights.get(flightId);
