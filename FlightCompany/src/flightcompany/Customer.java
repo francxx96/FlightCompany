@@ -17,7 +17,7 @@ public class Customer extends User {
 	}
 
     public boolean bookFlight(Flight f) {
-    	if (bookedFlights.add(f) && f.addPassenger(this) && money >= f.getCost())
+    	if (bookedFlights.add(f) && f.addPassenger(this))
     		return true;
 
     	return false;

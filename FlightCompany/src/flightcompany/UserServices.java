@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,10 +18,10 @@ public class UserServices {
 		this.airports = Utilities.getAirports();
 	}
 	
-	public boolean registrationRequest(String name, String surname, String nickname, String password, boolean admin) {		
+	public String registrationRequest(String name, String surname, String nickname, String password, boolean admin) {		
     	
 		if (users.containsKey(nickname))
-    		return false;
+    		return "[Error] Nickname already in use, please choose another one";
     	
     	User newUsr;
     	if(admin)
@@ -32,37 +31,46 @@ public class UserServices {
 		
 		users.put(nickname, newUsr);
 		Utilities.writeUsers(users);
-		return true;
+		return "User registration completed";
 	}
 	
-	public boolean loginRequest(String nickname, String password) {
+	public String loginRequest(String nickname, String password) {
 		
 		User usr = users.get(nickname);
-    	if (usr == null || !usr.getPassword().equals(password))
-    		return false;
+    	if (usr == null)
+    		return "[Error] User not registered";
+    	
+    	if (usr.isLogin())
+    		return "[Error] User already logged in";
+    	
+    	if (!usr.getPassword().equals(password))
+    		return "[Error] Wrong password";
     	
     	usr.setLogin(true);
-		return true;
+		return "User login completed";
     }
 	
-	public boolean logoutRequest(String nickname) {
+	public String logoutRequest(String nickname) {
+		
 		User usr = users.get(nickname);
-
+		if (usr == null)
+    		return "[Error] User not registered";
+		
 		if (!usr.isLogin())
-			return false;
+			return "[Error] User not logged in";
 		
 		usr.setLogin(false);
-		return true;
+		return "User logout completed";
 	}
 	
-	public List<List<Flight>> searchRoutes(AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
+	public String searchRoutes(AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
 		
 		Airport depAirport = airports.get(depCity);
 		Airport arrAirport = airports.get(arrCity);
-		return searchRoutes(depAirport, arrAirport, depTime, new ArrayList<Airport>());
+		return printRoutes(searchRoutes(depAirport, arrAirport, depTime, new ArrayList<Airport>()));
 	}
 	
-	public List<List<Flight>> searchRoutes(Airport depAirp, Airport arrAirp, LocalDateTime depTime, List<Airport> visitedAirports) {
+	private List<List<Flight>> searchRoutes(Airport depAirp, Airport arrAirp, LocalDateTime depTime, List<Airport> visitedAirports) {
 		List<List<Flight>> routes = new ArrayList<List<Flight>>();
 		
 		Collection<Flight> departures = depAirp.getFlights().values();
@@ -87,67 +95,98 @@ public class UserServices {
 		return routes;
 	}
 	
+    private static String printRoutes(List<List<Flight>> routes) {
+    	String routesString = "The following flights are registered: \n\n";
+    	
+    	for(List<Flight> route : routes) {
+    		routesString += "Route consisting of " + route.size() + " flights:\n";
+    		for(Flight f : route) {
+    			routesString += f.toString() + "\n";
+    		}
+    		routesString += "\n---------------------------------------------------------------------\n";
+    	}
+    	
+    	return routesString;
+    }
 	
-	public boolean bookFlight(String flightId, String nickname) {
+	
+	public String bookFlight(String flightId, String nickname) {
+		
 		Customer cst = (Customer) users.get(nickname);
-		if (cst == null || !cst.isLogin())
-			return false;
+		if (cst == null)
+			return "[Error] Customer not registered";
+		
+		if(!cst.isLogin())
+			return "[Error] Customer not logged in";
 				
 		Flight f = flights.get(flightId);
 		if (f == null)
-			return false;
+			return "[Error] Inexistent flight";
 		
-		boolean isBooked = cst.bookFlight(f);
-		if (isBooked) {
-			//users.put(cst.getNickname(), cst);
-			//loggedUsers.put(cst.getNickname(), cst);
-			//flights.put(f.getId(), f);
-			Utilities.writeUsers(users);
-			Utilities.writeFlights(flights);
-		}
+		if (!cst.bookFlight(f)) 
+			return "[Error] Generic error during reservation completion";
 		
-		return isBooked;
+		if (cst.getMoney() < f.getCost())
+			return "[Error] Customer has not enough money for buying ticket";
+		
+		//users.put(cst.getNickname(), cst);
+		//loggedUsers.put(cst.getNickname(), cst);
+		//flights.put(f.getId(), f);
+		Utilities.writeUsers(users);
+		Utilities.writeFlights(flights);
+		
+		return "Reservation completed";
 	}
 	
 
-	public boolean cancelFlight(String flightId, String nickname) {
+	public String cancelFlight(String flightId, String nickname) {
+		
 		Customer cst = (Customer) users.get(nickname);
-		if (cst == null || !cst.isLogin())
-			return false;
+		if (cst == null)
+			return "[Error] Customer not registered";
+		
+		if(!cst.isLogin())
+			return "[Error] Customer not logged in";
 		
 		Flight f = flights.get(flightId);
 		if (f == null)
-			return false;
+			return "[Error] Inexistent flight";
 		
-		boolean isCancelled = cst.cancelFlight(f);
-		if (isCancelled) {
-			// The customer will receive a refund if he cancels the reservation at least one hour before departure
-			if (f.getDepTime().isAfter(LocalDateTime.now().plusHours(1)))
-				cst.setMoney(cst.getMoney()+f.getCost());
-			
-			//users.put(cst.getNickname(), cst);
-			//loggedUsers.put(cst.getNickname(), cst);
-			//flights.put(f.getId(), f);
-			Utilities.writeUsers(users);
-			Utilities.writeFlights(flights);
+		if (!cst.cancelFlight(f)) {
+			return "[Error] Generic error during reservation deletion";
 		}
+
+		// The customer will receive a refund if he cancels the reservation at least one hour before departure
+		if (f.getDepTime().isAfter(LocalDateTime.now().plusHours(1)))
+			cst.setMoney(cst.getMoney()+f.getCost());
 		
-		return isCancelled;
+		//users.put(cst.getNickname(), cst);
+		//loggedUsers.put(cst.getNickname(), cst);
+		//flights.put(f.getId(), f);
+		Utilities.writeUsers(users);
+		Utilities.writeFlights(flights);
+		
+		return "Reservation is deleted successfully";
 	}
 	
 
-	public boolean chargeMoney(double amount, String nickname) {
-		Customer cst = (Customer) users.get(nickname);
-		if (cst == null || !cst.isLogin())
-			return false;
+	public String chargeMoney(double amount, String nickname) {
 		
-		boolean isCharged = cst.chargeMoney(amount);
-		if (isCharged) {
-			//users.put(cst.getNickname(), cst);
-			//loggedUsers.put(cst.getNickname(), cst);
-			Utilities.writeUsers(users);
-		}
-		return isCharged;
+		Customer cst = (Customer) users.get(nickname);
+		if (cst == null)
+			return "[Error] Customer not registered";
+		
+		if(!cst.isLogin())
+			return "[Error] Customer not logged in";
+		
+		if (!cst.chargeMoney(amount))
+			return "[Error] Negative amount was inserted";
+		
+		//users.put(cst.getNickname(), cst);
+		//loggedUsers.put(cst.getNickname(), cst);
+		Utilities.writeUsers(users);
+		
+		return "Money charged successfully";
 	}
 
 	/**
@@ -160,28 +199,35 @@ public class UserServices {
 	 * @param depTime the departure time of the new Flight
 	 * @return true if the creation of the new flight has success, false otherwise
 	 */
-	public boolean addFlight(String flightId, AirplaneModel planeModel, AirportCity depCity, AirportCity arrCity, LocalDateTime depTime, String nickname) {
+	public String addFlight(String flightId, AirplaneModel planeModel, AirportCity depCity, AirportCity arrCity, LocalDateTime depTime, String nickname) {
 
 		Admin admin = (Admin) users.get(nickname);
-
-		if (admin == null || !admin.isLogin() || flights.containsKey(flightId))
-			return false;
+		if (admin == null)
+			return "[Error] Adminisitrator not registered";
+		
+		if (!admin.isLogin())
+			return "[Error] Administrator not logged in";
+		
+		if (flights.containsKey(flightId))
+			return "[Error] Flight ID already in use";
 		
 		Airport depAirport = airports.get(depCity);
 		Airport arrAirport = airports.get(arrCity);
 		
 		if (depAirport == null || arrAirport == null)
-			return false;
+			return "[Error] Inexistent departure and/or arrival airports";
 
 		Airplane plane = new Airplane(planeModel);
 		Flight newFlight = new Flight(flightId, plane, depAirport, arrAirport, depTime);
+		
 		flights.put(newFlight.getId(), newFlight);
 		Utilities.writeFlights(flights);
+		
 		depAirport.addFlight(newFlight);
 		//airports.put(depAirport.getCity(), depAirport);
 		Utilities.writeAirports(airports);
 		
-		return true;
+		return "Flight added successfully";
 	}
 	
 	/**
@@ -190,11 +236,17 @@ public class UserServices {
 	 * @param nickname the nickname of the administrator
 	 * @return true if the deletion of the existing flight has success, false otherwise
 	 */
-	public boolean removeFlight(String flightId, String nickname) {	
+	public String removeFlight(String flightId, String nickname) {	
+
 		Admin admin = (Admin) users.get(nickname);
+		if (admin == null)
+			return "[Error] Adminisitrator not registered";
 		
-		if (admin == null || !admin.isLogin() || !flights.containsKey(flightId))
-			return false;
+		if (!admin.isLogin())
+			return "[Error] Administrator not logged in";
+		
+		if (!flights.containsKey(flightId))
+			return "[Error] Inexistent flight";
 		
 		Flight removedFlight = flights.remove(flightId);
 		Utilities.writeFlights(flights);
@@ -204,7 +256,7 @@ public class UserServices {
 		//airports.put(depAirport.getCity(), depAirport);
 		Utilities.writeAirports(airports);
 		
-		return true;
+		return "Flight deleted successfully";
 	}
 	
 	
@@ -215,21 +267,25 @@ public class UserServices {
 	 * @param nickname the nickname of the administrator
 	 * @return true if the addition of delay has success, false otherwise
 	 */
-	public boolean putDelay(String flightId, int minutes, String nickname) {
+	public String putDelay(String flightId, int minutes, String nickname) {
+		
 		Admin admin = (Admin) users.get(nickname);
-		if (admin == null || !admin.isLogin())
-			return false;
+		if (admin == null)
+			return "[Error] Adminisitrator not registered";
+		
+		if (!admin.isLogin())
+			return "[Error] Administrator not logged in";
 		
 		Flight f = flights.get(flightId);
 		if (f == null)
-			return false;
+			return "[Error] Inexistent flight";
 		
 		f.setDepTime(f.getDepTime().plusMinutes(minutes));
 		f.setArrTime(f.getArrTime().plusMinutes(minutes));
 		//flights.put(f.getId(), f);
 		Utilities.writeFlights(flights);
 		
-		return true;
+		return "Delay added successfully";
 	}
 	
 	/**
@@ -239,22 +295,26 @@ public class UserServices {
 	 * @param nickname the nickname of the administrator
 	 * @return true if the discount is set correctly, false otherwise
 	 */
-	public boolean putDeal(String flightId, double dealPerc, String nickname) {
+	public String putDeal(String flightId, double dealPerc, String nickname) {
+
 		Admin admin = (Admin) users.get(nickname);
-		if (admin == null || !admin.isLogin())
-			return false;
+		if (admin == null)
+			return "[Error] Adminisitrator not registered";
+		
+		if (!admin.isLogin())
+			return "[Error] Administrator not logged in";
 		
 		Flight f = flights.get(flightId);
 		if (f == null)
-			return false;
+			return "[Error] Inexistent flight";
 		
-		if (dealPerc < 0 && dealPerc >= 1)
-			return false;
+		if (dealPerc <= 0 && dealPerc >= 1)
+			return "[Error] Invalid percentage";
 		
 		f.setCost(f.getCost() * dealPerc);
 		//flights.put(f.getId(), f);
 		Utilities.writeFlights(flights);
 		
-		return true;
+		return "Discount set successfully";
 	}
 }

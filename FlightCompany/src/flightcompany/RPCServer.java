@@ -51,74 +51,46 @@ public class RPCServer {
 	            				admin = true;
 	            			else
 	            				admin = false;
-	            			if(userSer.registrationRequest(jo.getString("name"),jo.getString("surname"),jo.getString("nickname"),jo.getString("password"), admin))
-	            				response = "User successfully registered!";
-	            			else
-	            				response = "Please, choose a different username";
+	            			
+	            			response = userSer.registrationRequest(jo.getString("name"),jo.getString("surname"),jo.getString("nickname"),jo.getString("password"), admin);
 	            			break;
-	            		case "login": 
-	            			if(userSer.loginRequest(jo.getString("nickname"),jo.getString("password")))
-	            				response = "User successfully logged in!";
-	            			else
-	            				response = "Username not present";
+	            		case "login":
+	            			response = userSer.loginRequest(jo.getString("nickname"),jo.getString("password"));
 	            			break;
 	            		case "logout":
-	            			if(userSer.logoutRequest(jo.getString("nickname")))
-	            				response = "User successfully logged out!";
-	            			else
-	            				response = "Username not present";
+	            			response = userSer.logoutRequest(jo.getString("nickname")); 
 	            			break;
 	            		case "searchRoutes": 
 	            			dateTime = LocalDateTime.parse(jo.getString("depTime"), formatter);
 	            			depCity = AirportCity.valueOf(jo.getString("depCity").toUpperCase());
 	            			arrCity = AirportCity.valueOf(jo.getString("arrCity").toUpperCase());
-	            			response = flightsToString(userSer.searchRoutes(depCity,arrCity,dateTime));
+	            			response = userSer.searchRoutes(depCity,arrCity,dateTime);
 	            			break;
 	            		case "bookFlight":
-	            			if(userSer.bookFlight(jo.getString("flightId"), jo.getString("nickname")))
-	            				response = "User successfully booked!";
-	            			else
-	            				response = "Please, choose another flight";
+	            			response = userSer.bookFlight(jo.getString("flightId"), jo.getString("nickname"));
 	            			break;
 	            		case "cancelFlight":
-	            			if(userSer.cancelFlight(jo.getString("flightId"), jo.getString("nickname")))
-	            				response = "User successfully cancelled!";
-	            			else
-	            				response = "Please, choose another flight";
+	            			response = userSer.cancelFlight(jo.getString("flightId"), jo.getString("nickname"));
 	            			break;
 	            		case "charge":
-	            			if(userSer.chargeMoney(Double.parseDouble(jo.getString("amount")), jo.getString("nickname")))
-	            				response = "Account updated successfully!";
-	            			else
-	            				response = "Unable to update account";
+	            			response = userSer.chargeMoney(Double.parseDouble(jo.getString("amount")), jo.getString("nickname"));
 	            			break;
 	            		case "addFlight": 
 	            			dateTime = LocalDateTime.parse(jo.getString("depTime"), formatter);
 	            			depCity = AirportCity.valueOf(jo.getString("depCity").toUpperCase());
 	            			arrCity = AirportCity.valueOf(jo.getString("arrCity").toUpperCase());
 	            			AirplaneModel planeModel = AirplaneModel.valueOf(jo.getString("planeModel").toUpperCase());
-	            			if(userSer.addFlight(jo.getString("flightId"), planeModel, depCity, arrCity, dateTime, jo.getString("nickname")))
-	            				response = "Flight successfully added!";
-	            			else
-	            				response = "Unable to add the flight";
+	            			
+	            			response = userSer.addFlight(jo.getString("flightId"), planeModel, depCity, arrCity, dateTime, jo.getString("nickname"));
 	            			break;
 	            		case "removeFlight":
-	            			if(userSer.removeFlight(jo.getString("flightId"), jo.getString("nickname")))
-	            				response = "Flight successfully removed!";
-	            			else
-	            				response = "Unable to remove the flight";
+	            			response = userSer.removeFlight(jo.getString("flightId"), jo.getString("nickname")); 
 	            			break;
 	            		case "putDelay":
-	            			if(userSer.putDelay(jo.getString("flightId"), jo.getInt("minutes"), jo.getString("nickname")))
-	            				response = "Delay successfully added!";
-	            			else
-	            				response = "Unable to add the delay";
+	            			response = userSer.putDelay(jo.getString("flightId"), jo.getInt("minutes"), jo.getString("nickname"));
 	            			break;
 	            		case "putDeal":
-	            			if(userSer.putDeal(jo.getString("flightId"), Double.parseDouble(jo.getString("dealPerc")), jo.getString("nickname")))
-	            				response = "Deal successfully added!";
-	            			else
-	            				response = "Unable to add the deal";
+	            			response = userSer.putDeal(jo.getString("flightId"), Double.parseDouble(jo.getString("dealPerc")), jo.getString("nickname")); 
 	            			break;
                     }            
                 } catch (RuntimeException | JSONException e) {
@@ -152,21 +124,4 @@ public class RPCServer {
             }
         }
     }
-    
-    
-    public static String flightsToString(List<List<Flight>> routes) {
-    	String routesString = "The following flights are registered: \n\n";
-    	
-    	for(List<Flight> route : routes) {
-    		routesString += "Route consisting of " + route.size() + " flights:\n";
-    		for(Flight f : route) {
-    			routesString += f.toString() + "\n";
-    		}
-    		routesString += "\n---------------------------------------------------------------------\n";
-    	}
-    	
-    	return routesString;
-    }
-    
-    
 }
