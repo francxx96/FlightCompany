@@ -2,12 +2,10 @@ package flightcompany;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.rabbitmq.client.*;
+
 
 public class RPCServer {
 	

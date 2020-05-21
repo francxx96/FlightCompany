@@ -18,7 +18,7 @@ public class UserServices {
 		this.airports = Utilities.getAirports();
 	}
 	
-	public String registrationRequest(String name, String surname, String nickname, String password, boolean admin) {		
+	public synchronized String registrationRequest(String name, String surname, String nickname, String password, boolean admin) {		
     	
 		if (users.containsKey(nickname))
     		return "[Error] Nickname already in use, please choose another one";
@@ -34,7 +34,7 @@ public class UserServices {
 		return "User registration completed";
 	}
 	
-	public String loginRequest(String nickname, String password) {
+	public synchronized String loginRequest(String nickname, String password) {
 		
 		User usr = users.get(nickname);
     	if (usr == null)
@@ -50,7 +50,7 @@ public class UserServices {
 		return "User login completed";
     }
 	
-	public String logoutRequest(String nickname) {
+	public synchronized String logoutRequest(String nickname) {
 		
 		User usr = users.get(nickname);
 		if (usr == null)
@@ -63,14 +63,14 @@ public class UserServices {
 		return "User logout completed";
 	}
 	
-	public String searchRoutes(AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
+	public synchronized String searchRoutes(AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
 		
 		Airport depAirport = airports.get(depCity);
 		Airport arrAirport = airports.get(arrCity);
 		return printRoutes(searchRoutes(depAirport, arrAirport, depTime, new ArrayList<Airport>()));
 	}
 	
-	private List<List<Flight>> searchRoutes(Airport depAirp, Airport arrAirp, LocalDateTime depTime, List<Airport> visitedAirports) {
+	private synchronized List<List<Flight>> searchRoutes(Airport depAirp, Airport arrAirp, LocalDateTime depTime, List<Airport> visitedAirports) {
 		List<List<Flight>> routes = new ArrayList<List<Flight>>();
 		
 		Collection<Flight> departures = depAirp.getFlights().values();
@@ -95,7 +95,7 @@ public class UserServices {
 		return routes;
 	}
 	
-    private static String printRoutes(List<List<Flight>> routes) {
+    private synchronized String printRoutes(List<List<Flight>> routes) {
     	String routesString = "The following flights are registered: \n\n";
     	
     	for(List<Flight> route : routes) {
@@ -109,8 +109,7 @@ public class UserServices {
     	return routesString;
     }
 	
-	
-	public String bookFlight(String flightId, String nickname) {
+	public synchronized String bookFlight(String flightId, String nickname) {
 		
 		Customer cst = (Customer) users.get(nickname);
 		if (cst == null)
@@ -139,7 +138,7 @@ public class UserServices {
 	}
 	
 
-	public String cancelFlight(String flightId, String nickname) {
+	public synchronized String cancelFlight(String flightId, String nickname) {
 		
 		Customer cst = (Customer) users.get(nickname);
 		if (cst == null)
@@ -170,7 +169,7 @@ public class UserServices {
 	}
 	
 
-	public String chargeMoney(double amount, String nickname) {
+	public synchronized String chargeMoney(double amount, String nickname) {
 		
 		Customer cst = (Customer) users.get(nickname);
 		if (cst == null)
@@ -189,6 +188,7 @@ public class UserServices {
 		return "Money charged successfully";
 	}
 
+	
 	/**
 	 * Admin has the ability to create a new Flight object.
 	 * @param nickname the nickname of the administrator
@@ -199,7 +199,7 @@ public class UserServices {
 	 * @param depTime the departure time of the new Flight
 	 * @return true if the creation of the new flight has success, false otherwise
 	 */
-	public String addFlight(String flightId, AirplaneModel planeModel, AirportCity depCity, AirportCity arrCity, LocalDateTime depTime, String nickname) {
+	public synchronized String addFlight(String flightId, AirplaneModel planeModel, AirportCity depCity, AirportCity arrCity, LocalDateTime depTime, String nickname) {
 
 		Admin admin = (Admin) users.get(nickname);
 		if (admin == null)
@@ -230,13 +230,14 @@ public class UserServices {
 		return "Flight added successfully";
 	}
 	
+	
 	/**
 	 * Admin has the ability to delete an existing Flight object.
 	 * @param flightId the ID of the existing Flight
 	 * @param nickname the nickname of the administrator
 	 * @return true if the deletion of the existing flight has success, false otherwise
 	 */
-	public String removeFlight(String flightId, String nickname) {	
+	public synchronized String removeFlight(String flightId, String nickname) {	
 
 		Admin admin = (Admin) users.get(nickname);
 		if (admin == null)
@@ -267,7 +268,7 @@ public class UserServices {
 	 * @param nickname the nickname of the administrator
 	 * @return true if the addition of delay has success, false otherwise
 	 */
-	public String putDelay(String flightId, int minutes, String nickname) {
+	public synchronized String putDelay(String flightId, int minutes, String nickname) {
 		
 		Admin admin = (Admin) users.get(nickname);
 		if (admin == null)
@@ -288,6 +289,7 @@ public class UserServices {
 		return "Delay added successfully";
 	}
 	
+	
 	/**
 	 * Admin has the ability to put a discount on the cost of an existing Flight object.
 	 * @param flightId the ID of the existing Flight
@@ -295,7 +297,7 @@ public class UserServices {
 	 * @param nickname the nickname of the administrator
 	 * @return true if the discount is set correctly, false otherwise
 	 */
-	public String putDeal(String flightId, double dealPerc, String nickname) {
+	public synchronized String putDeal(String flightId, double dealPerc, String nickname) {
 
 		Admin admin = (Admin) users.get(nickname);
 		if (admin == null)

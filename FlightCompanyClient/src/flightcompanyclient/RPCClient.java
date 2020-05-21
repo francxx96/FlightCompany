@@ -135,7 +135,7 @@ public class RPCClient implements AutoCloseable {
     }
     
     
-    private String call(String message) throws IOException, InterruptedException {
+    public String call(String message) throws IOException, InterruptedException {
         final String corrId = UUID.randomUUID().toString();
 
         String replyQueueName = channel.queueDeclare().getQueue();	// non-durable, exclusive, autodelete queue with a generated name
