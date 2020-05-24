@@ -9,7 +9,10 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-
+/**
+ * Implements a flight made available by the fly company
+ * @author Emilio, Francesco
+ */
 public class Flight implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -35,28 +38,51 @@ public class Flight implements Serializable {
         this.arrTime = this.depTime.plusMinutes(round(dist/plane.getSpeed()));
     }
 
+    /**
+     * Calculate the seats still available on this flight
+     * @return the available sets
+     */
     public int getAvlSeats() {
         return plane.getMaxSeats() - passengers.size();
     }
     
+    /**
+     * Add a passenger to this flight
+     * @param p the customer to add
+     * @return true in case of success
+     */
     public boolean addPassenger(Customer p) {
         if (getAvlSeats() > 0 && p.getMoney() >= cost)
             if (passengers.add(p)) {
                 p.setMoney(p.getMoney()-cost);
                 return true;
             }
-        
         return false;
     }
     
+    /**
+     * Remove a passenger to this flight
+     * @param p the customer to remove
+     * @return true in case of success
+     */
     public boolean removePassenger(Customer p) {
     	return passengers.remove(p);
     }
     
+    /**
+     * Add a delay to this flight
+     * @param p the delay in minutes
+     * @return true in case of success
+     */
     public void addDelay(int minutes) {
     	this.arrTime.plusMinutes(minutes);
     }
     
+    /**
+     * Calculate the distance as the crow flies for the two airports
+     * @param departure, arrival the airports
+     * @return the distance
+     */
     public static double airportDistance(Airport departure, Airport arrival) {
         double lat1 = departure.getLatitude();
         double lat2 = arrival.getLatitude();

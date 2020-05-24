@@ -3,7 +3,10 @@ package flightcompany;
 import java.io.Serializable;
 import java.util.Objects;
 
-
+/**
+ * Implements a generic flight company user
+ * @author Emilio, Francesco
+ */
 public abstract class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -49,6 +52,7 @@ public abstract class User implements Serializable {
 		this.login = login;
 	}
 
+	public abstract boolean isAdmin();
 
 	@Override
     public int hashCode() {

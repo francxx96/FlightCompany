@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-
+/**
+ * Implements the airport that are involved in the airline's flights
+ * @author Emilio, Francesco
+ */
 public class Airport implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -23,16 +26,16 @@ public class Airport implements Serializable {
     }
 
     /**
-     * 
-     * @param f
+     * Adds the flight to the list of flights departing from this airport
+     * @param f the flight to add
      */
     public void addFlight(Flight f) {
         flights.put(f.getId(), f);
     }
     
     /**
-     * 
-     * @param f
+     * Removes the flight to the list of flights departing from this airport
+     * @param f the flight to add
      */
     public void removeFlight(Flight f) {
         flights.remove(f.getId());

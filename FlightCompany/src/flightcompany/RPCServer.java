@@ -47,12 +47,7 @@ public class RPCServer {
                     System.out.println(" [SERVER thread] Received: " + jo.toString());                    
                     switch(jo.getString("command")) {
 	            		case "registration":
-	            			boolean admin;
-	            			if(jo.getString("admin").equals("yes"))
-	            				admin = true;
-	            			else
-	            				admin = false;
-	            			
+	            			boolean admin = Boolean.parseBoolean(jo.getString("admin"));
 	            			response = userSer.registrationRequest(jo.getString("name"),jo.getString("surname"),jo.getString("nickname"),jo.getString("password"), admin);
 	            			break;
 	            		case "login":
@@ -67,8 +62,14 @@ public class RPCServer {
 	            			arrCity = AirportCity.valueOf(jo.getString("arrCity").toUpperCase());
 	            			response = userSer.searchRoutes(depCity,arrCity,dateTime);
 	            			break;
+	            		case "allRoutes":
+	            			response = userSer.printFlights();
+	            			break;
 	            		case "bookFlight":
 	            			response = userSer.bookFlight(jo.getString("flightId"), jo.getString("nickname"));
+	            			break;
+	            		case "bookedFlight":
+	            			response = userSer.bookedFlight(jo.getString("nickname"));
 	            			break;
 	            		case "cancelFlight":
 	            			response = userSer.cancelFlight(jo.getString("flightId"), jo.getString("nickname"));
@@ -95,7 +96,8 @@ public class RPCServer {
 	            			break;
                     }            
                 } catch (RuntimeException | JSONException e) {
-                    System.out.println(" [SERVER worker thread] " + e);
+                    System.out.println(" [SERVER thread] " + e);
+                    response = "[Error] User not authorized";
                 } finally {
                     channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProps, response.getBytes("UTF-8")); // (exchange,routingKey,properties,body)
                     channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false); // (deliveryTag, multiple) acknowledge one or several received messages

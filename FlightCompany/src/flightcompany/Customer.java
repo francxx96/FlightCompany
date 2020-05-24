@@ -3,6 +3,11 @@ package flightcompany;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Represents users of the airline who are system customers
+ * @author Emilio, Francesco
+ *
+ */
 public class Customer extends User {
 	private static final long serialVersionUID = 1L;
 	
@@ -16,6 +21,11 @@ public class Customer extends User {
         this.bookedFlights = new HashSet<>();
 	}
 
+	/**
+	 * Book an available seat on the flight provided
+	 * @param f the flight to book
+	 * @return true in case of success
+	 */
     public boolean bookFlight(Flight f) {
     	if (bookedFlights.add(f) && f.addPassenger(this))
     		return true;
@@ -23,6 +33,11 @@ public class Customer extends User {
     	return false;
     }
     
+	/**
+	 * Cancel a reservation on the flight provided
+	 * @param f the flight booked
+	 * @return true in case of success
+	 */
     public boolean cancelFlight(Flight f) {
     	if (bookedFlights.remove(f) && f.removePassenger(this))
     		return true;
@@ -30,6 +45,11 @@ public class Customer extends User {
     	return false;
     }
     
+	/**
+	 * Adds the amount to the user's balance
+	 * @param amount to add
+	 * @return true in case of success
+	 */
     public boolean chargeMoney(double amount) {
         if (amount <= 0)
         	return false;
@@ -46,9 +66,26 @@ public class Customer extends User {
         this.money = money;
     }
     
-    
-    @Override
+    public Set<Flight> getBookedFlights() {
+		return bookedFlights;
+	}
+
+	public void setBookedFlights(Set<Flight> bookedFlights) {
+		this.bookedFlights = bookedFlights;
+	}
+
+	@Override
     public String toString() {
         return "Customer: [money=" + String.format("%.2f",money) + ", fligthsBookedNum=" + bookedFlights.size() + ", "+ super.toString().substring(2);
     }
+    
+    /**
+     * Indicates that this user is a customer
+     * @return false
+     */
+	@Override
+	public boolean isAdmin() {
+		return false;
+	}
+	
 }

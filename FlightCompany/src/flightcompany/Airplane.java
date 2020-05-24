@@ -2,6 +2,10 @@ package flightcompany;
 
 import java.io.Serializable;
 
+/**
+ * Implements the airplanes that are involved in the airline's flights
+ * @author Emilio, Francesco
+ */
 public class Airplane implements Serializable {
 	private static final long serialVersionUID = 1L;
 	

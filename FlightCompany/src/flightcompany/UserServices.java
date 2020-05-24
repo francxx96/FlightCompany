@@ -1,6 +1,7 @@
 package flightcompany;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,7 +48,12 @@ public class UserServices {
     		return "[Error] Wrong password";
     	
     	usr.setLogin(true);
-		return "User login completed";
+
+    	System.out.println(usr.getClass());
+    	if(usr.isAdmin())
+    		return "Admin login completed";
+    	else
+    		return "Customer login completed";
     }
 	
 	public synchronized String logoutRequest(String nickname) {
@@ -64,7 +70,6 @@ public class UserServices {
 	}
 	
 	public synchronized String searchRoutes(AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
-		
 		Airport depAirport = airports.get(depCity);
 		Airport arrAirport = airports.get(arrCity);
 		return printRoutes(searchRoutes(depAirport, arrAirport, depTime, new ArrayList<Airport>()));
@@ -95,7 +100,7 @@ public class UserServices {
 		return routes;
 	}
 	
-    private synchronized String printRoutes(List<List<Flight>> routes) {
+    private String printRoutes(List<List<Flight>> routes) {
     	String routesString = "The following flights are registered: \n\n";
     	
     	for(List<Flight> route : routes) {
@@ -107,6 +112,17 @@ public class UserServices {
     	}
     	
     	return routesString;
+    }
+    
+    public String printFlights() {
+    	String flightsString = "Flights registered: \n";
+    	
+    	for(Flight f : flights.values()) {
+    		flightsString += f.toString() + "\n";
+    		flightsString += "\n---------------------------------------------------------------------\n";
+    	}
+    	
+    	return flightsString;
     }
 	
 	public synchronized String bookFlight(String flightId, String nickname) {
@@ -122,11 +138,11 @@ public class UserServices {
 		if (f == null)
 			return "[Error] Inexistent flight";
 		
-		if (!cst.bookFlight(f)) 
-			return "[Error] Generic error during reservation completion";
-		
 		if (cst.getMoney() < f.getCost())
 			return "[Error] Customer has not enough money for buying ticket";
+		
+		if (!cst.bookFlight(f)) 
+			return "[Error] Generic error during reservation completion";
 		
 		//users.put(cst.getNickname(), cst);
 		//loggedUsers.put(cst.getNickname(), cst);
@@ -137,7 +153,26 @@ public class UserServices {
 		return "Reservation completed";
 	}
 	
-
+	public synchronized String bookedFlight(String nickname) {
+		
+		Customer cst = (Customer) users.get(nickname);
+		if (cst == null)
+			return "[Error] Customer not registered";
+		
+		if(!cst.isLogin())
+			return "[Error] Customer not logged in";
+				
+		String flightsString = "You have booked the following flights: \n\n";
+    	
+		for(Flight f : cst.getBookedFlights()) {
+			flightsString += "Flight ID: " + f.getId() + " - " + f.getPlane() + "\n"
+	                + "From " + f.getDepAirport() + ", at time: " + f.getDepTime() + "\n"
+	                + "To " + f.getArrAirport() + ", at time: " + f.getArrTime() + "\n\n";
+		}
+    	
+    	return flightsString;
+	}
+	
 	public synchronized String cancelFlight(String flightId, String nickname) {
 		
 		Customer cst = (Customer) users.get(nickname);
@@ -309,12 +344,14 @@ public class UserServices {
 		if (f == null)
 			return "[Error] Inexistent flight";
 		
-		if (dealPerc <= 0 && dealPerc >= 1)
+		if (dealPerc <= 0 && dealPerc >= 100)
 			return "[Error] Invalid percentage";
-		
-		f.setCost(f.getCost() * dealPerc);
+		System.out.println(f.getCost());
+		f.setCost(f.getCost() - f.getCost()* dealPerc/100);
 		//flights.put(f.getId(), f);
 		Utilities.writeFlights(flights);
+		System.out.println(f.getCost());
+		System.out.println(flights.get(flightId).getCost());
 		
 		return "Discount set successfully";
 	}
