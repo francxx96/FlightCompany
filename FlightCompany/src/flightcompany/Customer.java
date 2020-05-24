@@ -46,8 +46,9 @@ public class Customer extends User {
         this.money = money;
     }
     
+    
     @Override
     public String toString() {
-        return "Customer: " + super.toString();
+        return "Customer: [money=" + String.format("%.2f",money) + ", fligthsBookedNum=" + bookedFlights.size() + ", "+ super.toString().substring(2);
     }
 }

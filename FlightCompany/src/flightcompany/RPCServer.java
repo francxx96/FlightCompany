@@ -1,7 +1,10 @@
 package flightcompany;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeoutException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.rabbitmq.client.*;
@@ -13,7 +16,7 @@ public class RPCServer {
     private static final UserServices userSer = new UserServices();
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 			
-    public static void main(String[] argv) throws Exception {
+    public static void main(String[] argv) {
     	ConnectionFactory factory = new ConnectionFactory(); // "factory" class to facilitate opening a Connection to an AMQP broker
         factory.setHost("localhost");
         
@@ -41,7 +44,7 @@ public class RPCServer {
                 try {
                     String message = new String(delivery.getBody(), "UTF-8");
 					JSONObject jo = new JSONObject(message);
-                    System.out.println(" [SERVER worker thread] Received: " + jo.toString());                    
+                    System.out.println(" [SERVER thread] Received: " + jo.toString());                    
                     switch(jo.getString("command")) {
 	            		case "registration":
 	            			boolean admin;
@@ -120,6 +123,8 @@ public class RPCServer {
                     }
                 }
             }
-        }
+        } catch (IOException | TimeoutException e1) {
+			System.out.println(e1);
+		}
     }
 }

@@ -79,8 +79,8 @@ public class Flight implements Serializable {
     
     @Override
     public String toString() {
-        return "Flight ID: " + id + " -- " + plane + "\n"
-                + "Available seats: " + getAvlSeats() + " -- Ticket price: €" + cost + "\n"
+        return "Flight ID: " + id + " - " + plane + "\n"
+                + "Available seats: " + getAvlSeats() + " - Ticket price: €" + String.format("%.2f",cost) + "\n"
                 + "From " + depAirport + ", at time: " + depTime.format(DateTimeFormatter.ofPattern("dd-MM-yy HH:mm")) + "\n"
                 + "To " + arrAirport + ", at time: " + arrTime.format(DateTimeFormatter.ofPattern("dd-MM-yy HH:mm"));
     }

@@ -151,10 +151,9 @@ public class UserServices {
 		if (f == null)
 			return "[Error] Inexistent flight";
 		
-		if (!cst.cancelFlight(f)) {
-			return "[Error] Generic error during reservation deletion";
-		}
-
+		if (!cst.cancelFlight(f)) 
+			return "[Error] FlightID not booked";
+		
 		// The customer will receive a refund if he cancels the reservation at least one hour before departure
 		if (f.getDepTime().isAfter(LocalDateTime.now().plusHours(1)))
 			cst.setMoney(cst.getMoney()+f.getCost());
