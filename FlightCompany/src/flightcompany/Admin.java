@@ -12,18 +12,18 @@ public class Admin extends User {
 	}
 	
 	
-    @Override
-    public String toString() {
-        return " Administrator: " + super.toString();
-    }
-
-    /**
+	/**
      * Indicates that this user is an administrator
      * @return true
      */
 	@Override
 	public boolean isAdmin() {
 		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return " Administrator: " + super.toString();
 	}
 	
 }

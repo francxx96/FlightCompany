@@ -9,7 +9,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import com.rabbitmq.client.*;
 
-
+/**
+ * Use the open-source message-broker RabbitMQ to build a scalable RPC server
+ * @author Emilio, Francesco
+ */
 public class RPCServer {
 	
     private static final String RPC_QUEUE_NAME = "rpc_queue";

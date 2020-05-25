@@ -58,6 +58,15 @@ public class Customer extends User {
         return true;
     }
     
+    /**
+     * Indicates that this user is a customer
+     * @return false
+     */
+	@Override
+	public boolean isAdmin() {
+		return false;
+	}
+    
     public double getMoney() {
         return money;
     }
@@ -78,14 +87,5 @@ public class Customer extends User {
     public String toString() {
         return "Customer: [money=" + String.format("%.2f",money) + ", fligthsBookedNum=" + bookedFlights.size() + ", "+ super.toString().substring(2);
     }
-    
-    /**
-     * Indicates that this user is a customer
-     * @return false
-     */
-	@Override
-	public boolean isAdmin() {
-		return false;
-	}
 	
 }

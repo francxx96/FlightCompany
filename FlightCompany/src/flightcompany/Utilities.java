@@ -9,13 +9,19 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * Implements I/O access methods to the resources managed by the airline
+ * @author Emilio, Francesco
+ */
 public class Utilities {
 	public final static String USERS_FILE = "users.txt";
 	public final static String FLIGHTS_FILE = "flights.txt";
 	public final static String AIRPORTS_FILE = "airports.txt";
 	
-	
+	/**
+	 * Update the file containing the flight map
+	 * @param the flight map
+	 */
 	public static void writeFlights(Map<String, Flight> map) {
 		try {
 			FileOutputStream fos = new FileOutputStream(new File(FLIGHTS_FILE));
@@ -30,6 +36,10 @@ public class Utilities {
 		}
 	}
 	
+	/**
+	 * Update the file containing the user map
+	 * @param the user map
+	 */
 	public static void writeUsers(Map<String, User> map) {
 		try {
 			FileOutputStream fos = new FileOutputStream(new File(USERS_FILE));
@@ -44,7 +54,10 @@ public class Utilities {
 		}
 	}
 	
-	
+	/**
+	 * Update the file containing the airport map
+	 * @param the airport map
+	 */
 	public static void writeAirports(Map<AirportCity, Airport> map) {
 		try {
 			FileOutputStream fos = new FileOutputStream(new File(AIRPORTS_FILE));
@@ -59,14 +72,11 @@ public class Utilities {
 		}
 	}
 	
-	public static Map<AirportCity, Airport> getAirports() {
-		Object obj = readFromFile(AIRPORTS_FILE);
-		if(obj == null)
-			return new HashMap<AirportCity, Airport>();
-		else
-			return (HashMap<AirportCity, Airport>) obj;
-	}
 	
+	/**
+	 * Read the file containing the flight map
+	 * @return the flight map
+	 */
 	public static Map<String, Flight> getFlights() {
 		Object obj = readFromFile(FLIGHTS_FILE);
 		if(obj == null)
@@ -75,6 +85,10 @@ public class Utilities {
 			return (HashMap<String, Flight>) obj;
 	}
 	
+	/**
+	 * Read the file containing the user map
+	 * @return the user map
+	 */
 	public static Map<String, User> getUsers() {
 		Object obj = readFromFile(USERS_FILE);
 		if(obj == null)
@@ -83,6 +97,23 @@ public class Utilities {
 			return (HashMap<String, User>) obj;
 	}
 	
+	/**
+	 * Read the file containing the airport map
+	 * @return the airport map
+	 */
+	public static Map<AirportCity, Airport> getAirports() {
+		Object obj = readFromFile(AIRPORTS_FILE);
+		if(obj == null)
+			return new HashMap<AirportCity, Airport>();
+		else
+			return (HashMap<AirportCity, Airport>) obj;
+	}
+	
+	/**
+	 * Reads a generic object from the file associated with the given name
+	 * @param the file name
+	 * @return the object read
+	 */
 	public static Object readFromFile(String filename) {
 		File file = new File(filename); 
 		Object data = null;
