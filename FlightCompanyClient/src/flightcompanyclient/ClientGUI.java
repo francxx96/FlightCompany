@@ -823,7 +823,7 @@ public class ClientGUI extends JFrame {
 				JSONObject jo = new JSONObject();
 				if(admin) {
 					try {
-						jo.put("command", "allRoutes");
+						jo.put("command", "allFlights");
 						response = rpc.call(jo.toString());
 						textAreaRoutes.setText(response);
 						switchPanel(panelRoutes);

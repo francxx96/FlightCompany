@@ -66,7 +66,7 @@ public class RPCServer {
 	            			arrCity = AirportCity.valueOf(jo.getString("arrCity").toUpperCase());
 	            			response = userSer.searchRoutes(depCity,arrCity,dateTime);
 	            			break;
-	            		case "allRoutes":
+	            		case "allFlights":
 	            			response = userSer.printFlights();
 	            			break;
 	            		case "bookFlight":
