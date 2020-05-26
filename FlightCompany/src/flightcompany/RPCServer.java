@@ -10,12 +10,13 @@ import org.json.JSONObject;
 import com.rabbitmq.client.*;
 
 /**
- * Use the open-source message-broker RabbitMQ to build a scalable RPC server
+ * Use the open-source message-broker RabbitMQ to build a scalable RPC-style server
  * @author Emilio, Francesco
  */
 public class RPCServer {
 	
     private static final String RPC_QUEUE_NAME = "rpc_queue";
+    private static final String EXCHANGE_NAME = "notifications";
     private static final UserServices userSer = new UserServices();
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 			
@@ -27,10 +28,10 @@ public class RPCServer {
         		Channel channel = connection.createChannel()) {
             channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null); // (queue, passive,durable,exclusive,autoDelete,arguments)
             channel.queuePurge(RPC_QUEUE_NAME); // Purges the contents of the given queue (all of its messages deleted)
-
             channel.basicQos(1); // tells RabbitMQ not to give more than one message to a worker at a time (in order to spread the load equally over multiple servers we need)
-
-            System.out.println(" [SERVER worker thread] Awaiting RPC requests ... ");
+            channel.exchangeDeclare(EXCHANGE_NAME, "fanout"); // Actively declare a non-autodelete, non-durable exchange of fanout type for notification
+            
+            System.out.println(" [SERVER thread] Awaiting RPC requests ... ");
             
             Object monitor = new Object();
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {	// (String,Delivery) a callback that will do the work and send the response back
@@ -39,7 +40,7 @@ public class RPCServer {
                         .correlationId(delivery.getProperties().getCorrelationId())	// Useful to correlate RPC responses with requests
                         .build();
 
-                String response = "";
+                String response = "", notification;
                 LocalDateTime dateTime;
     			AirportCity depCity;
     			AirportCity arrCity;
@@ -93,9 +94,17 @@ public class RPCServer {
 	            			break;
 	            		case "putDelay":
 	            			response = userSer.putDelay(jo.getString("flightId"), jo.getInt("minutes"), jo.getString("nickname"));
+	            			if(!response.contains("[Error]")) {
+	            				notification = "Delay on flight " + jo.getString("flightId") + " of " + jo.getInt("minutes") + " minutes";
+		            			channel.basicPublish(EXCHANGE_NAME, "", null, notification.getBytes("UTF-8"));
+	            			}
 	            			break;
 	            		case "putDeal":
 	            			response = userSer.putDeal(jo.getString("flightId"), Double.parseDouble(jo.getString("dealPerc")), jo.getString("nickname")); 
+	            			if(!response.contains("[Error]")) {
+	            				notification = "Deal on flight " + jo.getString("flightId") + " of " + jo.getString("dealPerc") + "%";
+	            				channel.basicPublish(EXCHANGE_NAME, "", null, notification.getBytes("UTF-8"));
+	            			}
 	            			break;
                     }            
                 } catch (RuntimeException | JSONException e) {
@@ -103,11 +112,8 @@ public class RPCServer {
                     response = "[Error] User not authorized";
                 } finally {
                     channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProps, response.getBytes("UTF-8")); // (exchange,routingKey,properties,body)
-                    channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false); // (deliveryTag, multiple) acknowledge one or several received messages
+                    channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false); // (deliveryTag, multiple) acknowledge that the received message has been processed
                     
-                    System.out.println(Utilities.getUsers());
-                    System.out.println(Utilities.getAirports());
-                    System.out.println(Utilities.getFlights());
                     // RabbitMq consumer worker thread notifies the RPC server owner thread
                     synchronized (monitor) {
                         monitor.notify();

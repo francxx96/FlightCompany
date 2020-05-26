@@ -95,6 +95,14 @@ public class ClientGUI extends JFrame {
 	}
 	
 	/**
+	 * Shows a panel with the notification received
+	 * @param msg content of the notification
+	 */
+	public static void showNotify(String msg) {
+		JOptionPane.showMessageDialog(null, msg);
+	}
+	
+	/**
 	 * Switch the current visible panel with the input panel
 	 * @param p the panel to set
 	 */
@@ -106,7 +114,7 @@ public class ClientGUI extends JFrame {
 	}
 	
 	/**
-	 * Create the frame.
+	 * Create the frame and starts the application
 	 */
 	public ClientGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -211,9 +219,25 @@ public class ClientGUI extends JFrame {
 	    			} else if(response.equals("Customer login completed")) {
 	    				nickname = jo.getString("nickname");
 	    				admin = false;	
+	    				rpc.subscribeNotification();
 	    				btnAccount.setVisible(true);
 		    			btnRoutes.setVisible(true);
 						btnLogout.setVisible(true);
+		    			
+						jo = new JSONObject();
+						try {
+		        			jo.put("command", "bookedFlight");
+		        			jo.put("nickname", nickname);
+			    			response = rpc.call(jo.toString());
+						} catch (Exception ex) {
+							System.out.println(ex);
+						}
+						if(response.contains("[Error]"))
+							JOptionPane.showMessageDialog(null, response);
+						else {
+							textPaneFlightsBooked.setText(response);
+						}
+						
 		    			switchPanel(panelAccCustomer);
 	    			}
 	    			

@@ -64,7 +64,6 @@ public class UserServices {
     	
     	usr.setLogin(true);
 
-    	System.out.println(usr.getClass());
     	if(usr.isAdmin())
     		return "Admin login completed";
     	else
@@ -403,12 +402,9 @@ public class UserServices {
 		
 		if (dealPerc <= 0 && dealPerc >= 100)
 			return "[Error] Invalid percentage";
-		System.out.println(f.getCost());
+		
 		f.setCost(f.getCost() - f.getCost()* dealPerc/100);
-		//flights.put(f.getId(), f);
 		Utilities.writeFlights(flights);
-		System.out.println(f.getCost());
-		System.out.println(flights.get(flightId).getCost());
 		
 		return "Discount set successfully";
 	}

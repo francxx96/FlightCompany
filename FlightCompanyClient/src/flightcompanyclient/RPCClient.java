@@ -1,17 +1,13 @@
 package flightcompanyclient;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.*;
+
 import java.io.IOException;
-import java.util.Scanner;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Use the open-source message-broker RabbitMQ to build an RPC client
@@ -19,9 +15,10 @@ import org.json.JSONObject;
  */
 public class RPCClient implements AutoCloseable {
 
+    private final String EXCHANGE_NAME = "notifications";
+    private final String requestQueueName = "rpc_queue";
     private Connection connection; 
     private Channel channel;
-    private String requestQueueName = "rpc_queue";
 
     public RPCClient() throws IOException, TimeoutException, JSONException, InterruptedException {
         ConnectionFactory factory = new ConnectionFactory(); // "factory" class to facilitate opening a Connection to an AMQP broker
@@ -32,6 +29,29 @@ public class RPCClient implements AutoCloseable {
     }
     
     
+    /**
+     * Subscribe the user to notifications of flight delays or offers
+     * @throws IOException
+     */
+    public void subscribeNotification() throws IOException {
+        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
+        String queueName = channel.queueDeclare().getQueue();
+        channel.queueBind(queueName, EXCHANGE_NAME, "");
+        
+        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+            String message = new String(delivery.getBody(), "UTF-8");
+            ClientGUI.showNotify(message);
+        };
+        channel.basicConsume(queueName, true, deliverCallback, consumerTag -> { });
+    }
+    
+    
+    /**
+     * Sends an RPC request and blocks until the answer is received
+     * @param message to send
+     * @return the response provided by the server
+     * @throws IOException, InterruptedException
+     */
     public String call(String message) throws IOException, InterruptedException {
         final String corrId = UUID.randomUUID().toString();
 
@@ -61,6 +81,10 @@ public class RPCClient implements AutoCloseable {
         return result;
     }
 
+    
+    /**
+     * Close the connection and all its channels
+     */
     public void close() throws IOException {
         connection.close();
     }
