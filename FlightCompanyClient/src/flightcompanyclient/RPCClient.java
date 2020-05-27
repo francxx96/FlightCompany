@@ -3,10 +3,16 @@ package flightcompanyclient;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
+
+import javax.swing.JOptionPane;
+
 import org.json.JSONException;
 
 /**
@@ -14,16 +20,23 @@ import org.json.JSONException;
  * @author Emilio, Francesco
  */
 public class RPCClient implements AutoCloseable {
-
+	private static String RABBITMQ_URI = "amqp://hksxizgg:IM7wz6lQXcPECyKWbr5DMETsP9RQs06G@reindeer.rmq.cloudamqp.com/hksxizgg";
     private final String EXCHANGE_NAME = "notifications";
     private final String requestQueueName = "rpc_queue";
     private Connection connection; 
     private Channel channel;
 
     public RPCClient() throws IOException, TimeoutException, JSONException, InterruptedException {
-        ConnectionFactory factory = new ConnectionFactory(); // "factory" class to facilitate opening a Connection to an AMQP broker
-        factory.setHost("localhost");
-
+        ConnectionFactory factory = new ConnectionFactory(); // "factory" class to facilitate opening a Connection to an AMQP broker 	
+        //factory.setHost("localhost"); // "guest" by default, limited to localhost connections
+        
+        try {
+			factory.setUri(RABBITMQ_URI);
+		} catch (KeyManagementException | NoSuchAlgorithmException | URISyntaxException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+        
         connection = factory.newConnection();
         channel = connection.createChannel();
     }

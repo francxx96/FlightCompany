@@ -1,9 +1,14 @@
 package flightcompany;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeoutException;
+
+import javax.swing.JOptionPane;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +19,7 @@ import com.rabbitmq.client.*;
  * @author Emilio, Francesco
  */
 public class RPCServer {
-	
+	private static String RABBITMQ_URI = "amqp://hksxizgg:IM7wz6lQXcPECyKWbr5DMETsP9RQs06G@reindeer.rmq.cloudamqp.com/hksxizgg";
     private static final String RPC_QUEUE_NAME = "rpc_queue";
     private static final String EXCHANGE_NAME = "notifications";
     private static final UserServices userSer = new UserServices();
@@ -22,8 +27,14 @@ public class RPCServer {
 			
     public static void main(String[] argv) {
     	ConnectionFactory factory = new ConnectionFactory(); // "factory" class to facilitate opening a Connection to an AMQP broker
-        factory.setHost("localhost");
-        
+    	//factory.setHost("localhost");	// "guest" by default, limited to localhost connections
+    	try {
+			factory.setUri(RABBITMQ_URI);
+		} catch (KeyManagementException | NoSuchAlgorithmException | URISyntaxException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+    	
         try (Connection connection = factory.newConnection();
         		Channel channel = connection.createChannel()) {
             channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null); // (queue, passive,durable,exclusive,autoDelete,arguments)

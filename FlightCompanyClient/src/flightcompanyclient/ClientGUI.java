@@ -160,7 +160,7 @@ public class ClientGUI extends JFrame {
 		JLabel lblRabbitMQ = new JLabel("");
 		lblRabbitMQ.setBounds(15, 36, 618, 200);
 		panelMain.add(lblRabbitMQ);
-		lblRabbitMQ.setIcon(new ImageIcon("RabbitMQ_logo.png"));
+		lblRabbitMQ.setIcon(new ImageIcon(ClientGUI.class.getResource("/RabbitMQ_logo.png")));
 		
 		panelLogin = new JPanel();
 		layeredPane.add(panelLogin, "name_549009494437700");
@@ -915,7 +915,7 @@ public class ClientGUI extends JFrame {
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setBounds(0, 0, 150, 95);
 		contentPane.add(lblLogo);
-		lblLogo.setIcon(new ImageIcon("RabbitMQ.png"));
+		lblLogo.setIcon(new ImageIcon(ClientGUI.class.getResource("/RabbitMQ.png")));
 
         
 		btnAccount.setVisible(false);
