@@ -273,7 +273,7 @@ public class UserServices {
 		
 		Utilities.writeUsers(users);
 		
-		return "Money charge completed, your amount is " + String.format("%.2f",cst.getMoney()) + " €";
+		return "Money charge completed, your amount is " + String.format("%.2f",cst.getMoney()) + "€";
 	}
 
 	
