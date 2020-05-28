@@ -41,7 +41,7 @@ public class RPCClient implements AutoCloseable {
     
     
     /**
-     * Subscribe the user to notifications of flight delays or offers
+     * Subscribe the user to notifications of flight delays or offers.
      * @throws IOException
      */
     public void subscribeNotification() throws IOException {
@@ -58,10 +58,11 @@ public class RPCClient implements AutoCloseable {
     
     
     /**
-     * Sends an RPC request and blocks until the answer is received
+     * Sends an RPC request and blocks until the answer is received.
      * @param message to send
      * @return the response provided by the server
-     * @throws IOException, InterruptedException
+     * @throws IOException
+     * @throws InterruptedException
      */
     public String call(String message) throws IOException, InterruptedException {
         final String corrId = UUID.randomUUID().toString();
@@ -94,7 +95,7 @@ public class RPCClient implements AutoCloseable {
 
     
     /**
-     * Close the connection and all its channels
+     * Close the connection and all its channels.
      */
     public void close() throws IOException {
         connection.close();

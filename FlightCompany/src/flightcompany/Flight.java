@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Implements a flight made available by the fly company
+ * Implements a flight made available by the flight company.
  * @author Emilio, Francesco
  */
 public class Flight implements Serializable {
@@ -39,15 +39,15 @@ public class Flight implements Serializable {
     }
 
     /**
-     * Calculate the seats still available on this flight
-     * @return the available sets
+     * Calculate the seats still available on this flight.
+     * @return the available seats
      */
     public int getAvlSeats() {
         return plane.getMaxSeats() - passengers.size();
     }
     
     /**
-     * Add a passenger to this flight
+     * Add a passenger to this flight.
      * @param p the customer to add
      * @return true in case of success
      */
@@ -61,7 +61,7 @@ public class Flight implements Serializable {
     }
     
     /**
-     * Remove a passenger to this flight
+     * Remove a passenger to this flight.
      * @param p the customer to remove
      * @return true in case of success
      */
@@ -70,18 +70,18 @@ public class Flight implements Serializable {
     }
     
     /**
-     * Add a delay to this flight
-     * @param p the delay in minutes
-     * @return true in case of success
+     * Add a delay to this flight.
+     * @param minutes the delay in minutes
      */
     public void addDelay(int minutes) {
     	this.arrTime.plusMinutes(minutes);
     }
     
     /**
-     * Calculate the distance as the crow flies for the two airports
-     * @param departure, arrival the airports
-     * @return the distance
+     * Calculate the distance as the crow flies for the two airports.
+     * @param departure the departure airports
+     * @param arrival the arrival airports
+     * @return the distance between airports
      */
     public static double airportDistance(Airport departure, Airport arrival) {
         double lat1 = departure.getLatitude();

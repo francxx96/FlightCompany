@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents users of the airline who are system customers
+ * Represents users of the airline who are system customers.
  * @author Emilio, Francesco
  *
  */
@@ -34,7 +34,7 @@ public class Customer extends User {
     }
     
 	/**
-	 * Cancel a reservation on the flight provided
+	 * Cancel a reservation on the flight provided.
 	 * @param f the flight booked
 	 * @return true in case of success
 	 */
@@ -46,7 +46,7 @@ public class Customer extends User {
     }
     
 	/**
-	 * Adds the amount to the user's balance
+	 * Adds the amount to the user's balance.
 	 * @param amount to add
 	 * @return true in case of success
 	 */
@@ -59,7 +59,7 @@ public class Customer extends User {
     }
     
     /**
-     * Indicates that this user is a customer
+     * Indicates that this user is a customer.
      * @return false
      */
 	@Override

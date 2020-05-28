@@ -22,9 +22,14 @@ public class UserServices {
 		this.airports = Utilities.getAirports();
 	}
 	
+
 	/**
-	 * Handles the request to register a new user on the system
-	 * @param name, surname, nickname, password, admin
+	 * Handles the request to register a new user on the system.
+	 * @param name the name of the new user
+	 * @param surname the surname of the new user
+	 * @param nickname the nickname of the new user
+	 * @param password the password of the new user
+	 * @param admin true if the new user is an administrator, false otherwise
 	 * @return a string with the outcome of the operation
 	 */
 	public synchronized String registrationRequest(String name, String surname, String nickname, String password, boolean admin) {		
@@ -43,9 +48,11 @@ public class UserServices {
 		return "User registration completed";
 	}
 	
+
 	/**
-	 * Handles a user's login request
-	 * @param nickname, password
+	 * Handles a user's login request.
+	 * @param nickname the nickname of the user
+	 * @param password the password of the user
 	 * @return a string with the outcome of the operation
 	 */
 	public synchronized String loginRequest(String nickname, String password) {
@@ -69,8 +76,8 @@ public class UserServices {
     }
 	
 	/**
-	 * Handles a user's logout request
-	 * @param nickname
+	 * Handles a user's logout request.
+	 * @param nickname the nickname of the user
 	 * @return a string with the outcome of the operation
 	 */
 	public synchronized String logoutRequest(String nickname) {
@@ -89,9 +96,11 @@ public class UserServices {
 	/**
 	 * Calculate routes, even consisting of multiple flights, 
 	 * that leave the departure airport after a date and time, 
-	 * and arrive at the established destination airport
-	 * @param departure city, arrival city, departure date_time
-	 * @return all the available routes
+	 * and arrive at the established destination airport.
+	 * @param depCity the departure city
+	 * @param arrCity the arrival city
+	 * @param depTime the departure time
+	 * @return a string with all the available routes
 	 */
 	public synchronized String searchRoutes(AirportCity depCity, AirportCity arrCity, LocalDateTime depTime) {
 		Airport depAirport = airports.get(depCity);
@@ -102,8 +111,11 @@ public class UserServices {
 	/**
 	 * Calculate routes that leave the departure airport after 
 	 * a date and time and arrive at the destination airport without 
-	 * going through the airports already visited
-	 * @param departure city, arrival city, departure date_time, visited airports
+	 * going through the airports already visited.
+	 * @param depAirp the departure airport
+	 * @param arrAirp the arrival airport
+	 * @param depTime the departure time
+	 * @param visitedAirports the list of already visited airports
 	 * @return all the available routes
 	 */
 	private synchronized List<List<Flight>> searchRoutes(Airport depAirp, Airport arrAirp, LocalDateTime depTime, List<Airport> visitedAirports) {
@@ -132,8 +144,8 @@ public class UserServices {
 	}
 	
 	/**
-	 * Returns a string containing the list of routes provided
-	 * @param routes
+	 * Returns a string containing the list of routes provided.
+	 * @param routes the list of routes, each one composed by one or more flights
 	 * @return a string with all the routes
 	 */
     private String printRoutes(List<List<Flight>> routes) {
@@ -151,7 +163,7 @@ public class UserServices {
     }
     
 	/**
-	 * Returns a string containing the list of flights
+	 * Returns a string containing the list of flights.
 	 * @return a string with all the flights
 	 */
     public String printFlights() {
@@ -166,8 +178,9 @@ public class UserServices {
     }
 
     /**
-     * Handles the user's flight booking request
-     * @param flightId, nickname
+     * Handles the user's flight booking request.
+     * @param flightId the ID of the floght to be booked
+     * @param nickname the nickname of the user that made the request
      * @return a string with the outcome of the operation
      */
 	public synchronized String bookFlight(String flightId, String nickname) {
@@ -196,8 +209,8 @@ public class UserServices {
 	}
 
 	/**
-	 * Returns a string containing the user's booked flights
-	 * @param nickname
+	 * Returns a string containing the user's booked flights.
+	 * @param nickname the nickname of the user that made the request
 	 * @return a string with all the flights booked
 	 */
 	public synchronized String bookedFlight(String nickname) {
@@ -220,11 +233,12 @@ public class UserServices {
     	return flightsString;
 	}
 	
-    /**
-     * Manages the request for cancellation of the flight reservation by the user
-     * @param flightId, nickname
-     * @return a string with the outcome of the operation
-     */
+	/**
+	 * Manages the request for cancellation of the flight reservation by the user.
+     * @param flightId the ID of the floght to be cancelled
+     * @param nickname the nickname of the user that made the request
+	 * @return a string with the outcome of the operation
+	 */
 	public synchronized String cancelFlight(String flightId, String nickname) {
 		
 		Customer cst = (Customer) users.get(nickname);
@@ -245,9 +259,6 @@ public class UserServices {
 		if (f.getDepTime().isAfter(LocalDateTime.now().plusHours(1)))
 			cst.setMoney(cst.getMoney()+f.getCost());
 		
-		//users.put(cst.getNickname(), cst);
-		//loggedUsers.put(cst.getNickname(), cst);
-		//flights.put(f.getId(), f);
 		Utilities.writeUsers(users);
 		Utilities.writeFlights(flights);
 		
@@ -255,8 +266,9 @@ public class UserServices {
 	}
 	
 	/**
-	 * Update the user's balance by adding the amount provided
-	 * @param amount, nickname
+	 * Update the user's balance by adding the amount provided.
+	 * @param amount the amount to be charged
+	 * @param nickname  the nickname of the user that made the request
 	 * @return a string with the outcome of the operation
 	 */
 	public synchronized String chargeMoney(double amount, String nickname) {
@@ -278,8 +290,8 @@ public class UserServices {
 
 	
 	/**
-	 * Adds a flight with the data provided by the admin
-	 * @param nickname of the administrator, 
+	 * Adds a flight with the data provided by the admin.
+	 * @param nickname of the administrator
 	 * @param flightId of the new flight
 	 * @param planeModel the airplane model
 	 * @param depCity the departure airport city
@@ -319,7 +331,7 @@ public class UserServices {
 	
 	
 	/**
-	 * Remove an existing flight provided by the admin
+	 * Remove an existing flight provided by the admin.
 	 * @param flightId of the existing Flight
 	 * @param nickname of the administrator
 	 * @return a string with the outcome of the operation
@@ -348,7 +360,7 @@ public class UserServices {
 	
 	
 	/**
-	 * Add minutes of delay on an existing flight provided by the admin
+	 * Add minutes of delay on an existing flight provided by the admin.
 	 * @param flightId the ID of the existing Flight
 	 * @param minutes amount of time in minutes to be added as delay
 	 * @param nickname the nickname of the administrator
@@ -369,7 +381,6 @@ public class UserServices {
 		
 		f.setDepTime(f.getDepTime().plusMinutes(minutes));
 		f.setArrTime(f.getArrTime().plusMinutes(minutes));
-		//flights.put(f.getId(), f);
 		Utilities.writeFlights(flights);
 		
 		return "Delay added successfully";
@@ -377,9 +388,9 @@ public class UserServices {
 	
 	
 	/**
-	 * Put a discount on the cost of an existing flight provided by the admin
+	 * Put a discount on the cost of an existing flight provided by the admin.
 	 * @param flightId of the existing Flight
-	 * @param deal percentage to the cost
+	 * @param dealPerc percentage to the cost
 	 * @param nickname of the administrator
 	 * @return a string with the outcome of the operation
 	 */

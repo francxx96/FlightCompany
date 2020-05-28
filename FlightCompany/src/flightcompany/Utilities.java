@@ -19,8 +19,8 @@ public class Utilities {
 	public final static String AIRPORTS_FILE = "airports.txt";
 	
 	/**
-	 * Update the file containing the flight map
-	 * @param the flight map
+	 * Update the file containing the flight map.
+	 * @param map the flight map
 	 */
 	public static void writeFlights(Map<String, Flight> map) {
 		try {
@@ -37,8 +37,8 @@ public class Utilities {
 	}
 	
 	/**
-	 * Update the file containing the user map
-	 * @param the user map
+	 * Update the file containing the user map.
+	 * @param map the user map
 	 */
 	public static void writeUsers(Map<String, User> map) {
 		try {
@@ -55,8 +55,8 @@ public class Utilities {
 	}
 	
 	/**
-	 * Update the file containing the airport map
-	 * @param the airport map
+	 * Update the file containing the airport map.
+	 * @param map the airport map
 	 */
 	public static void writeAirports(Map<AirportCity, Airport> map) {
 		try {
@@ -74,7 +74,7 @@ public class Utilities {
 	
 	
 	/**
-	 * Read the file containing the flight map
+	 * Read the file containing the flight map.
 	 * @return the flight map
 	 */
 	public static Map<String, Flight> getFlights() {
@@ -86,7 +86,7 @@ public class Utilities {
 	}
 	
 	/**
-	 * Read the file containing the user map
+	 * Read the file containing the user map.
 	 * @return the user map
 	 */
 	public static Map<String, User> getUsers() {
@@ -98,7 +98,7 @@ public class Utilities {
 	}
 	
 	/**
-	 * Read the file containing the airport map
+	 * Read the file containing the airport map.
 	 * @return the airport map
 	 */
 	public static Map<AirportCity, Airport> getAirports() {
@@ -110,8 +110,8 @@ public class Utilities {
 	}
 	
 	/**
-	 * Reads a generic object from the file associated with the given name
-	 * @param the file name
+	 * Reads a generic object from the file associated with the given name.
+	 * @param filename the file name
 	 * @return the object read
 	 */
 	public static Object readFromFile(String filename) {
