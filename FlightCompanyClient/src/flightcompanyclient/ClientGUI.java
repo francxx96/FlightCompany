@@ -61,7 +61,6 @@ public class ClientGUI extends JFrame {
 	private JTextField textField_Deal;
 	private JTextField textField_PasswordReg;
 	private JCheckBox chckbxAdminReg;
-	private JTextPane textPaneFlightsBooked;
 	private JTextField textField_FlightIDAdmin;
 	private JButton btnLogout;
 	private JButton btnAccount;
@@ -77,6 +76,8 @@ public class ClientGUI extends JFrame {
 	private JTextField textField_DepCitySearch;
 	private JTextField textField_ArrCitySearch;
 	private JTextField textField_DepTimeSearch;
+	private TextArea textAreaBooked;
+	private JLabel lblNicknameMain;
 	
 	/**
 	 * Launch the application.
@@ -166,10 +167,10 @@ public class ClientGUI extends JFrame {
 		layeredPane.add(panelLogin, "name_549009494437700");
 		panelLogin.setLayout(null);
 		
-		JLabel lblUsername = new JLabel("NICKNAME");
-		lblUsername.setFont(new Font("Times New Roman", Font.BOLD, 18));
-		lblUsername.setBounds(15, 54, 618, 41);
-		panelLogin.add(lblUsername);
+		JLabel lblNicknameLogin = new JLabel("NICKNAME");
+		lblNicknameLogin.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblNicknameLogin.setBounds(15, 54, 618, 41);
+		panelLogin.add(lblNicknameLogin);
 		
 		textField_NicknameLogin = new JTextField();
 		textField_NicknameLogin.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -177,10 +178,10 @@ public class ClientGUI extends JFrame {
 		panelLogin.add(textField_NicknameLogin);
 		textField_NicknameLogin.setColumns(10);
 		
-		JLabel lblPassword = new JLabel("PASSWORD");
-		lblPassword.setFont(new Font("Times New Roman", Font.BOLD, 18));
-		lblPassword.setBounds(15, 162, 618, 41);
-		panelLogin.add(lblPassword);
+		JLabel lblPasswordLogin = new JLabel("PASSWORD");
+		lblPasswordLogin.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblPasswordLogin.setBounds(15, 162, 618, 41);
+		panelLogin.add(lblPasswordLogin);
 		
 		textField_PasswordLogin = new JTextField();
 		textField_PasswordLogin.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -216,6 +217,8 @@ public class ClientGUI extends JFrame {
 		    			btnAdd.setVisible(true);
 		    			btnLogout.setVisible(true);
 		    			switchPanel(panelAccAdmin);
+		    			lblNicknameMain.setText(nickname);
+		    			lblNicknameMain.setVisible(true);
 	    			} else if(response.equals("Customer login completed")) {
 	    				nickname = jo.getString("nickname");
 	    				admin = false;	
@@ -223,6 +226,8 @@ public class ClientGUI extends JFrame {
 	    				btnAccount.setVisible(true);
 		    			btnRoutes.setVisible(true);
 						btnLogout.setVisible(true);
+		    			lblNicknameMain.setText(nickname);
+		    			lblNicknameMain.setVisible(true);
 		    			
 						jo = new JSONObject();
 						try {
@@ -235,7 +240,7 @@ public class ClientGUI extends JFrame {
 						if(response.contains("[Error]"))
 							JOptionPane.showMessageDialog(null, response);
 						else {
-							textPaneFlightsBooked.setText(response);
+							textAreaBooked.setText(response);
 						}
 						
 		    			switchPanel(panelAccCustomer);
@@ -287,10 +292,10 @@ public class ClientGUI extends JFrame {
 		textField_SurnameReg.setBounds(191, 70, 442, 30);
 		panelRegistration.add(textField_SurnameReg);
 		
-		JLabel lblNickname = new JLabel("Nickname");
-		lblNickname.setFont(new Font("Times New Roman", Font.PLAIN, 25));
-		lblNickname.setBounds(15, 123, 161, 30);
-		panelRegistration.add(lblNickname);
+		JLabel lblNicknameReg = new JLabel("Nickname");
+		lblNicknameReg.setFont(new Font("Times New Roman", Font.PLAIN, 25));
+		lblNicknameReg.setBounds(15, 123, 161, 30);
+		panelRegistration.add(lblNicknameReg);
 		
 		textField_NicknameReg = new JTextField();
 		textField_NicknameReg.setFont(new Font("Times New Roman", Font.PLAIN, 20));
@@ -298,10 +303,10 @@ public class ClientGUI extends JFrame {
 		textField_NicknameReg.setBounds(191, 123, 442, 30);
 		panelRegistration.add(textField_NicknameReg);
 		
-		JLabel lblPassword_1 = new JLabel("Password");
-		lblPassword_1.setFont(new Font("Times New Roman", Font.PLAIN, 25));
-		lblPassword_1.setBounds(15, 181, 161, 30);
-		panelRegistration.add(lblPassword_1);
+		JLabel lblPasswordReg = new JLabel("Password");
+		lblPasswordReg.setFont(new Font("Times New Roman", Font.PLAIN, 25));
+		lblPasswordReg.setBounds(15, 181, 161, 30);
+		panelRegistration.add(lblPasswordReg);
 		
 		JButton btnEnterReg = new JButton("ENTER");
 		btnEnterReg.addActionListener(new ActionListener() {
@@ -370,12 +375,6 @@ public class ClientGUI extends JFrame {
 		panelAccCustomer.setLayout(null);
 		layeredPane.add(panelAccCustomer, "name_793591725563100");
 		
-		textPaneFlightsBooked = new JTextPane();
-		textPaneFlightsBooked.setText("Booked flights list...");
-		textPaneFlightsBooked.setEditable(false);
-		textPaneFlightsBooked.setBounds(0, 0, 648, 250);
-		panelAccCustomer.add(textPaneFlightsBooked);
-		
 		textField_FlightIDCustomer = new JTextField();
 		textField_FlightIDCustomer.setColumns(10);
 		textField_FlightIDCustomer.setBounds(120, 259, 283, 30);
@@ -415,7 +414,7 @@ public class ClientGUI extends JFrame {
 						if(response.contains("[Error]"))
 							JOptionPane.showMessageDialog(null, response);
 						else {
-							textPaneFlightsBooked.setText(response);
+							textAreaBooked.setText(response);
 						}
 	    			} 
 				} catch (Exception ex) {
@@ -498,7 +497,7 @@ public class ClientGUI extends JFrame {
 						if(response.contains("[Error]"))
 							JOptionPane.showMessageDialog(null, response);
 						else {
-							textPaneFlightsBooked.setText(response);
+							textAreaBooked.setText(response);
 						}
 	    			} 
 				} catch (Exception ex) {
@@ -509,6 +508,10 @@ public class ClientGUI extends JFrame {
 		BookBTN.setFont(new Font("Times New Roman", Font.PLAIN, 25));
 		BookBTN.setBounds(418, 259, 115, 30);
 		panelAccCustomer.add(BookBTN);
+		
+		textAreaBooked = new TextArea();
+		textAreaBooked.setBounds(0, 0, 648, 253);
+		panelAccCustomer.add(textAreaBooked);
 		
 		panelAdd = new JPanel();
 		layeredPane.add(panelAdd, "name_794760049019300");
@@ -860,7 +863,7 @@ public class ClientGUI extends JFrame {
 					if(response.contains("[Error]"))
 						JOptionPane.showMessageDialog(null, response);
 					else {
-						textPaneFlightsBooked.setText(response);
+						textAreaBooked.setText(response);
 						switchPanel(panelAccCustomer);
 					}
 				}
@@ -900,6 +903,8 @@ public class ClientGUI extends JFrame {
 						btnAdd.setVisible(false);
 						btnLogout.setVisible(false);
 						nickname = "";
+		    			lblNicknameMain.setText(nickname);
+		    			lblNicknameMain.setVisible(false);
 						switchPanel(panelMain);
 					}
 					
@@ -916,8 +921,13 @@ public class ClientGUI extends JFrame {
 		lblLogo.setBounds(0, 0, 150, 95);
 		contentPane.add(lblLogo);
 		lblLogo.setIcon(new ImageIcon(ClientGUI.class.getResource("/RabbitMQ.png")));
-
-        
+		
+		lblNicknameMain = new JLabel("Nickname");
+		lblNicknameMain.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		lblNicknameMain.setBounds(104, 54, 182, 30);
+		contentPane.add(lblNicknameMain);
+		
+        lblNicknameMain.setVisible(false);
 		btnAccount.setVisible(false);
 		btnRoutes.setVisible(false);
 		btnAdd.setVisible(false);
