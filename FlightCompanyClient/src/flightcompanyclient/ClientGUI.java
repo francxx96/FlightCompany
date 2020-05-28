@@ -246,7 +246,7 @@ public class ClientGUI extends JFrame {
 		        			jo.put("amount", "0");
 		        			jo.put("nickname", nickname);
 			    			response = rpc.call(jo.toString());
-			    			
+			    			System.out.println(response);
 			    			if(response.contains("[Error]"))
 								JOptionPane.showMessageDialog(null, response);
 							else {
@@ -269,14 +269,27 @@ public class ClientGUI extends JFrame {
 			}
 		});
 		btnEnterLogin.setFont(new Font("Times New Roman", Font.BOLD, 20));
-		btnEnterLogin.setBounds(267, 283, 115, 29);
+		btnEnterLogin.setBounds(212, 283, 115, 29);
 		panelLogin.add(btnEnterLogin);
+		
+		JButton btn_BackLogin = new JButton("BACK");
+		btn_BackLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				textField_NicknameLogin.setText("");
+				textField_PasswordLogin.setText("");
+				switchPanel(panelMain);
+			}
+		});
+		btn_BackLogin.setFont(new Font("Times New Roman", Font.BOLD, 20));
+		btn_BackLogin.setBounds(342, 283, 115, 29);
+		panelLogin.add(btn_BackLogin);
 		
 		panelRoutes = new JPanel();
 		layeredPane.add(panelRoutes, "name_549039527560999");
 		panelRoutes.setLayout(null);
 		
 		TextArea textAreaRoutes = new TextArea();
+		textAreaRoutes.setEditable(false);
 		textAreaRoutes.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 		textAreaRoutes.setBounds(0, 0, 648, 328);
 		panelRoutes.add(textAreaRoutes);
@@ -369,7 +382,7 @@ public class ClientGUI extends JFrame {
 			}
 		});
 		btnEnterReg.setFont(new Font("Times New Roman", Font.BOLD, 20));
-		btnEnterReg.setBounds(261, 283, 115, 29);
+		btnEnterReg.setBounds(212, 283, 115, 29);
 		panelRegistration.add(btnEnterReg);
 		
 		textField_PasswordReg = new JTextField();
@@ -382,6 +395,21 @@ public class ClientGUI extends JFrame {
 		chckbxAdminReg.setFont(new Font("Times New Roman", Font.PLAIN, 25));
 		chckbxAdminReg.setBounds(15, 225, 214, 51);
 		panelRegistration.add(chckbxAdminReg);
+		
+		JButton btn_BackReg = new JButton("BACK");
+		btn_BackReg.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				textField_NameReg.setText("");
+				textField_SurnameReg.setText("");
+				textField_NicknameReg.setText("");
+				textField_PasswordReg.setText("");
+				chckbxAdminReg.setSelected(false);
+				switchPanel(panelMain);
+			}
+		});
+		btn_BackReg.setFont(new Font("Times New Roman", Font.BOLD, 20));
+		btn_BackReg.setBounds(342, 283, 115, 29);
+		panelRegistration.add(btn_BackReg);
 		
 		panelAccCustomer = new JPanel();
 		panelAccCustomer.setLayout(null);
@@ -548,6 +576,7 @@ public class ClientGUI extends JFrame {
 		panelAccCustomer.add(BookBTN);
 		
 		textAreaBooked = new TextArea();
+		textAreaBooked.setEditable(false);
 		textAreaBooked.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 		textAreaBooked.setBounds(0, 0, 648, 253);
 		panelAccCustomer.add(textAreaBooked);
