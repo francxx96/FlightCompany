@@ -1,41 +1,36 @@
 package flightcompanyclient;
 
-
+import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.SystemColor;
+import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane;
-
-import java.awt.CardLayout;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-import java.awt.event.ActionEvent;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import java.awt.Font;
-import java.awt.Color;
-import javax.swing.JTextPane;
-import javax.swing.JCheckBox;
-import java.awt.SystemColor;
-import java.awt.TextArea;
-
 
 /**
  * Implements the graphical interface used by the client to access the flight company's services
  * @author Emilio, Francesco
  */
 public class ClientGUI extends JFrame {
+	private static final long serialVersionUID = 1L;
 	
 	private final String dataTimeRegex = "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$";
 
