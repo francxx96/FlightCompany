@@ -11,8 +11,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
 
-import javax.swing.JOptionPane;
-
 import org.json.JSONException;
 
 /**

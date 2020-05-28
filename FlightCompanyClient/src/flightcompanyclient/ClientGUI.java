@@ -191,7 +191,7 @@ public class ClientGUI extends JFrame {
 		JButton btnEnterLogin = new JButton("ENTER");
 		btnEnterLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(!textField_NicknameLogin.getText().matches("^[a-zA-Z0-9]{2}$")){
+				if(!textField_NicknameLogin.getText().matches("^[a-zA-Z0-9]{2,}$")){
 					JOptionPane.showMessageDialog(null, "Please enter a nickname with only alphanumeric characters (at least two)");
 					return;
 				}
@@ -315,7 +315,7 @@ public class ClientGUI extends JFrame {
 					JOptionPane.showMessageDialog(null, "Please enter a surname of at least two letters without special characters");
 					return;
 				}
-				if(!textField_NicknameReg.getText().matches("^[a-zA-Z0-9]{2}$")){
+				if(!textField_NicknameReg.getText().matches("^[a-zA-Z0-9]{2,}$")){
 					JOptionPane.showMessageDialog(null, "Please enter a nickname with only alphanumeric characters (at least two)");
 					return;
 				}
