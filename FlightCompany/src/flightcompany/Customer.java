@@ -51,7 +51,7 @@ public class Customer extends User {
 	 * @return true in case of success
 	 */
     public boolean chargeMoney(double amount) {
-        if (amount <= 0)
+        if (amount < 0)
         	return false;
         
         money += amount;

@@ -122,7 +122,7 @@ public class RPCServer {
                 } finally {
                     channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProps, response.getBytes("UTF-8")); // (exchange,routingKey,properties,body)
                     channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false); // (deliveryTag, multiple) acknowledge that the received message has been processed
-                    
+                    System.out.println(Utilities.getAirports());
                     // RabbitMq consumer worker thread notifies the RPC server owner thread
                     synchronized (monitor) {
                         monitor.notify();

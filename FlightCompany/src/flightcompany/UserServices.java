@@ -144,7 +144,7 @@ public class UserServices {
     		for(Flight f : route) {
     			routesString += f.toString() + "\n";
     		}
-    		routesString += "\n---------------------------------------------------------------------\n";
+    		routesString += "---------------------------------------------------------------------\n";
     	}
     	
     	return routesString;
@@ -271,11 +271,9 @@ public class UserServices {
 		if (!cst.chargeMoney(amount))
 			return "[Error] Negative amount was inserted";
 		
-		//users.put(cst.getNickname(), cst);
-		//loggedUsers.put(cst.getNickname(), cst);
 		Utilities.writeUsers(users);
 		
-		return "Money charged successfully";
+		return "Money charge completed, your amount is " + String.format("%.2f",cst.getMoney()) + " €";
 	}
 
 	

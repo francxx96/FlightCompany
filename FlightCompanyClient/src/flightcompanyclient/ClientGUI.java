@@ -73,6 +73,7 @@ public class ClientGUI extends JFrame {
 	private JTextField textField_DepTimeSearch;
 	private TextArea textAreaBooked;
 	private JLabel lblNicknameMain;
+	private JLabel lblAmount;
 	
 	/**
 	 * Launch the application.
@@ -211,9 +212,9 @@ public class ClientGUI extends JFrame {
 		    			btnRoutes.setVisible(true);
 		    			btnAdd.setVisible(true);
 		    			btnLogout.setVisible(true);
-		    			switchPanel(panelAccAdmin);
 		    			lblNicknameMain.setText(nickname);
 		    			lblNicknameMain.setVisible(true);
+		    			switchPanel(panelAccAdmin);
 	    			} else if(response.equals("Customer login completed")) {
 	    				nickname = jo.getString("nickname");
 	    				admin = false;	
@@ -229,13 +230,31 @@ public class ClientGUI extends JFrame {
 		        			jo.put("command", "bookedFlight");
 		        			jo.put("nickname", nickname);
 			    			response = rpc.call(jo.toString());
+			    			
+							if(response.contains("[Error]"))
+								JOptionPane.showMessageDialog(null, response);
+							else {
+								textAreaBooked.setText(response);
+							}
 						} catch (Exception ex) {
 							System.out.println(ex);
 						}
-						if(response.contains("[Error]"))
-							JOptionPane.showMessageDialog(null, response);
-						else {
-							textAreaBooked.setText(response);
+						
+						jo = new JSONObject();
+						try {
+		        			jo.put("command", "charge");
+		        			jo.put("amount", "0");
+		        			jo.put("nickname", nickname);
+			    			response = rpc.call(jo.toString());
+			    			
+			    			if(response.contains("[Error]"))
+								JOptionPane.showMessageDialog(null, response);
+							else {
+			    				String total = response.substring(response.lastIndexOf(" "));
+			    				lblAmount.setText(total);
+							}
+						} catch (Exception ex) {
+							System.out.println(ex);
 						}
 						
 		    			switchPanel(panelAccCustomer);
@@ -258,6 +277,7 @@ public class ClientGUI extends JFrame {
 		panelRoutes.setLayout(null);
 		
 		TextArea textAreaRoutes = new TextArea();
+		textAreaRoutes.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 		textAreaRoutes.setBounds(0, 0, 648, 328);
 		panelRoutes.add(textAreaRoutes);
 		
@@ -335,9 +355,7 @@ public class ClientGUI extends JFrame {
 	    			response = rpc.call(jo.toString());
 	    			JOptionPane.showMessageDialog(null, response);
 	    			
-					if(response.contains("[Error]"))
-						return;
-					else {
+					if(!response.contains("[Error]")) {
 	    				textField_NameReg.setText("");
 	    				textField_SurnameReg.setText("");
 	    				textField_NicknameReg.setText("");
@@ -345,7 +363,6 @@ public class ClientGUI extends JFrame {
 	    				chckbxAdminReg.setSelected(false);
 	    				switchPanel(panelLogin);
 	    			} 
-
 				} catch (Exception ex) {
 					System.out.println(ex);
 				}
@@ -403,13 +420,27 @@ public class ClientGUI extends JFrame {
 		        			jo.put("command", "bookedFlight");
 		        			jo.put("nickname", nickname);
 			    			response = rpc.call(jo.toString());
+			    			
+							if(!response.contains("[Error]")) {
+								textAreaBooked.setText(response);
+							}
 						} catch (Exception ex) {
 							System.out.println(ex);
 						}
-						if(response.contains("[Error]"))
-							JOptionPane.showMessageDialog(null, response);
-						else {
-							textAreaBooked.setText(response);
+						
+						jo = new JSONObject();
+						try {
+		        			jo.put("command", "charge");
+		        			jo.put("amount", "0");
+		        			jo.put("nickname", nickname);
+			    			response = rpc.call(jo.toString());
+			    			
+			    			if(!response.contains("[Error]")) {
+			    				String total = response.substring(response.lastIndexOf(" "));
+			    				lblAmount.setText(total);
+							}
+						} catch (Exception ex) {
+							System.out.println(ex);
 						}
 	    			} 
 				} catch (Exception ex) {
@@ -428,7 +459,7 @@ public class ClientGUI extends JFrame {
 		
 		textField_AmountCharge = new JTextField();
 		textField_AmountCharge.setColumns(10);
-		textField_AmountCharge.setBounds(120, 298, 283, 30);
+		textField_AmountCharge.setBounds(273, 298, 130, 30);
 		panelAccCustomer.add(textField_AmountCharge);
 		
 		JButton ChargeBTN = new JButton("Charge");
@@ -446,11 +477,11 @@ public class ClientGUI extends JFrame {
         			jo.put("nickname", nickname);
 	    			response = rpc.call(jo.toString());
 	    			
-	    			if(response.contains("[Error]"))
-						return;
-					else {
+	    			if(!response.contains("[Error]")) {
+	    				String total = response.substring(response.lastIndexOf(" "));
 						JOptionPane.showMessageDialog(null, response);
 	    				textField_AmountCharge.setText("");
+	    				lblAmount.setText(total);
 					}
 				} catch (Exception ex) {
 					System.out.println(ex);
@@ -477,22 +508,34 @@ public class ClientGUI extends JFrame {
 	    			response = rpc.call(jo.toString());
 	    			JOptionPane.showMessageDialog(null, response);
 	    			
-					if(response.contains("[Error]"))
-						return;
-					else {
+					if(!response.contains("[Error]")) {
 	    				textField_FlightIDCustomer.setText("");
 	    				jo = new JSONObject();
 						try {
 		        			jo.put("command", "bookedFlight");
 		        			jo.put("nickname", nickname);
 			    			response = rpc.call(jo.toString());
+			    			
+							if(!response.contains("[Error]")) {
+								textAreaBooked.setText(response);
+							}
 						} catch (Exception ex) {
 							System.out.println(ex);
 						}
-						if(response.contains("[Error]"))
-							JOptionPane.showMessageDialog(null, response);
-						else {
-							textAreaBooked.setText(response);
+						
+						jo = new JSONObject();
+						try {
+		        			jo.put("command", "charge");
+		        			jo.put("amount", "0");
+		        			jo.put("nickname", nickname);
+			    			response = rpc.call(jo.toString());
+			    			
+			    			if(!response.contains("[Error]")) {
+			    				String total = response.substring(response.lastIndexOf(" "));
+			    				lblAmount.setText(total);
+							}
+						} catch (Exception ex) {
+							System.out.println(ex);
 						}
 	    			} 
 				} catch (Exception ex) {
@@ -505,8 +548,14 @@ public class ClientGUI extends JFrame {
 		panelAccCustomer.add(BookBTN);
 		
 		textAreaBooked = new TextArea();
+		textAreaBooked.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 		textAreaBooked.setBounds(0, 0, 648, 253);
 		panelAccCustomer.add(textAreaBooked);
+		
+		lblAmount = new JLabel("0,00");
+		lblAmount.setFont(new Font("Times New Roman", Font.PLAIN, 25));
+		lblAmount.setBounds(120, 298, 138, 30);
+		panelAccCustomer.add(lblAmount);
 		
 		panelAdd = new JPanel();
 		layeredPane.add(panelAdd, "name_794760049019300");
@@ -851,16 +900,29 @@ public class ClientGUI extends JFrame {
 	        			jo.put("command", "bookedFlight");
 	        			jo.put("nickname", nickname);
 		    			response = rpc.call(jo.toString());
+		    			
+						if(!response.contains("[Error]")) {
+							textAreaBooked.setText(response);
+						}
 					} catch (Exception ex) {
 						System.out.println(ex);
 					}
 					
-					if(response.contains("[Error]"))
-						JOptionPane.showMessageDialog(null, response);
-					else {
-						textAreaBooked.setText(response);
-						switchPanel(panelAccCustomer);
+					jo = new JSONObject();
+					try {
+	        			jo.put("command", "charge");
+	        			jo.put("amount", "0");
+	        			jo.put("nickname", nickname);
+		    			response = rpc.call(jo.toString());
+		    			
+		    			if(!response.contains("[Error]")) {
+		    				String total = response.substring(response.lastIndexOf(" "));
+		    				lblAmount.setText(total);
+						}
+					} catch (Exception ex) {
+						System.out.println(ex);
 					}
+					switchPanel(panelAccCustomer);
 				}
 			}
 		});

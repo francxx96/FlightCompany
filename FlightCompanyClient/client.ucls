@@ -3,7 +3,7 @@
   associations="true" dependencies="true" nesting-relationships="true" router="FAN">  
   <class id="1" language="java" name="flightcompanyclient.ClientGUI" project="FlightCompanyClient" 
     file="/FlightCompanyClient/src/flightcompanyclient/ClientGUI.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="936" width="293" x="50" y="-226"/>    
+    <position height="-1" width="-1" x="158" y="429"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -12,7 +12,7 @@
   </class>  
   <class id="2" language="java" name="flightcompanyclient.RPCClient" project="FlightCompanyClient" 
     file="/FlightCompanyClient/src/flightcompanyclient/RPCClient.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="599" y="240"/>    
+    <position height="-1" width="-1" x="539" y="431"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      

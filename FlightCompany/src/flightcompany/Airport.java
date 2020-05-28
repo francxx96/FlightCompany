@@ -60,7 +60,7 @@ public class Airport implements Serializable {
     
     @Override
 	public String toString() {
-		return " Airport[city=" + city + " DepFlightsNum=" + flights.size() + "]";
+		return " Airport[city=" + city + "]";
 	}
 
 	@Override
